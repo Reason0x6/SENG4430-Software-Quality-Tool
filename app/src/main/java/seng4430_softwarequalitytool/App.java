@@ -33,18 +33,13 @@ public class App {
         sourceRoot.tryToParse();
         List<CompilationUnit> compilations = sourceRoot.getCompilationUnits();
 
-       for(CompilationUnit cu : compilations){
-           System.out.println(cu.getAllContainedComments());
-       }
-        System.out.println();
-
 
        // Send the compilation units to the modules
         // TODO: This is where we do our things
        Util util = new Util();
        String res = util.sendCUToModules(compilations);
 
-       // Ouyput Computed stuff
+       // Output Computed stuff
        System.out.println(res);
 
 
