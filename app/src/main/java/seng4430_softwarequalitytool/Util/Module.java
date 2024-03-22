@@ -6,5 +6,7 @@ import java.util.List;
 
 public interface Module {
      String compute(List<CompilationUnit> compilationUnits);
-
+     void printModuleHeader();
+     void printInformation();
+     void saveResult();
 }
