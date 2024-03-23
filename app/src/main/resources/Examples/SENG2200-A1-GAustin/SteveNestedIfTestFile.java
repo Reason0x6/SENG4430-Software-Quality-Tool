@@ -1,4 +1,4 @@
-public class SteveTestFile {
+public class SteveNestedIfTestFile {
     public void simpleIf() {
         if (true) {
             System.out.println("Simple If");
