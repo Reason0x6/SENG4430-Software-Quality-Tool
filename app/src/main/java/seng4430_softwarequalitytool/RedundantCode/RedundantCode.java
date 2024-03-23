@@ -95,9 +95,25 @@ public class RedundantCode implements Module {
     }
 
     private Collection<String> checkUnusedCode(CompilationUnit compilationUnit) {
-        Collection<String> result = new ArrayList<>();
-        result.add("hello");
-        return result;
+        Set<String> functionNames = new HashSet<>();
+
+        // Collect declared method names
+        compilationUnit.findAll(MethodDeclaration.class)
+                .forEach(methodDeclaration -> functionNames.add(methodDeclaration.getNameAsString().trim() + "()"));
+
+        // Visit each method call and mark the corresponding function as used
+        compilationUnit.findAll(MethodCallExpr.class)
+                .forEach(methodCallExpr -> {
+                    String methodName = methodCallExpr.getNameAsString() + "()";
+                    functionNames.remove(methodName);
+                });
+
+        // Print out the remaining unused function names
+        for (String functionName : functionNames) {
+            System.out.println(functionName);
+        }
+
+        return functionNames;
     }
 
 
