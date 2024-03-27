@@ -28,6 +28,7 @@ public class CyclomaticComplexity implements Module {
 
     /** Properties object to hold risk ranges for cyclomatic complexity. */
     private Properties properties;
+    private List<CompilationUnit> CompilationUnits;
     private int complexity = 0;
 
     /**
@@ -58,10 +59,11 @@ public class CyclomaticComplexity implements Module {
 
     @Override
     public String compute(List<CompilationUnit> compilationUnits) {
+        this.CompilationUnits = compilationUnits;
         try{
             printModuleHeader();
-            this.complexity = calculateCyclomaticComplexity(compilationUnits);
             printInformation();
+            this.complexity = calculateCyclomaticComplexity(compilationUnits);
             saveResult();
             return "Cyclomatic Complexity Successfully Calculated.";
         }catch(Exception e){
@@ -75,7 +77,7 @@ public class CyclomaticComplexity implements Module {
     @Override
     public  void printModuleHeader(){
         System.out.println("---- Cyclomatic Complexity Module ----");
-        System.out.format("%25s %s", "Function Name", "Cyclomatic Complexity\n");
+        System.out.format("%-25s %s", "Function Name", "Cyclomatic Complexity\n");
     }
 
 
@@ -88,12 +90,16 @@ public class CyclomaticComplexity implements Module {
 
     @Override
     public void saveResult(){
-        System.out.println("Complexity Score: " + this.complexity + "\nRisk: " + evaluateRisk( this.complexity));
+        System.out.println("Avg Complexity Score: " + (this.complexity/this.CompilationUnits.size()) + "\nRisk: " + evaluateRisk( (this.complexity/this.CompilationUnits.size())));
     }
 
 
     public void printRowInformation(String methodName, int complexity){
-        System.out.format("%25s %s\n", methodName + "()", complexity);
+        System.out.format("%-25s %s\n", methodName + "()", complexity);
+    }
+
+    public void printClassInformation(String className, int methods){
+        System.out.format("----------- Class: " + className + " | Methods: " + methods + " ---------------\n");
     }
 
 
@@ -102,14 +108,25 @@ public class CyclomaticComplexity implements Module {
      * receives the complexity score for each compilation unit and returns adds to the total complexity.
      *
      * @param compilationUnits List of CompilationUnit objects representing Java source files.
-     * @return A string containing the computed complexity score and corresponding risk level.
+     * @return an int representing the total cyclomatic complexity of all compilation units.
      */
     public  int calculateCyclomaticComplexity(List<CompilationUnit> compilationUnits) {
+
         AtomicInteger totalComplexity = new AtomicInteger();
         for (CompilationUnit cu : compilationUnits) {
-            cu.findAll(MethodDeclaration.class).forEach(method -> {
+
+            AtomicInteger partialComplexity = new AtomicInteger();
+            String className = cu.getPrimaryTypeName().get();
+
+            List<MethodDeclaration> methods = cu.findAll(MethodDeclaration.class);
+            this.printClassInformation(className, methods.size());
+
+            methods.forEach(method -> {
+                partialComplexity.getAndIncrement();
                 totalComplexity.addAndGet(calculateMethodComplexity(method));
             });
+
+            System.out.println("Complexity for: " + className + "(): " + partialComplexity.get() + "\n");
         }
         return totalComplexity.get();
     }

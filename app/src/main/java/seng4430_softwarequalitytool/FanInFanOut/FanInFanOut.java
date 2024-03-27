@@ -76,12 +76,12 @@ public class FanInFanOut implements Module {
     public void printModuleHeader() {
         System.out.println("\n");
         System.out.println("---- Fan-in & Fan-out Module ----");
-        System.out.format("%25s %8s %8s\n", "Function Name", "Fan-in", "Fan-out");
+        System.out.format("%-25s %8s %8s\n", "Function Name", "Fan-in", "Fan-out");
     }
 
     public void printContent() {
         for (String key : fanIns.keySet()) {
-            System.out.format("%25s %8s %8s\n", key + "()", fanIns.get(key), fanOuts.get(key));
+            System.out.format("%-25s %8s %8s\n", key + "()", fanIns.get(key), fanOuts.get(key));
         }
     }
 
