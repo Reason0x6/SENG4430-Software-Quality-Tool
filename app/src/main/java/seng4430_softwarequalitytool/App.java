@@ -37,11 +37,7 @@ public class App {
        // Send the compilation units to the modules
         // TODO: This is where we do our things
        Util util = new Util();
-       String res = util.sendCUToModules(compilations);
-
-       // Output Computed stuff
-       System.out.println(res);
-
+       util.sendCUToModules(compilations);
 
     }
 }

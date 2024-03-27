@@ -25,13 +25,12 @@ public class Util {
         modules.add(new FanInFanOut());
     }
 
-    public  String sendCUToModules(List<CompilationUnit> compilationUnits) {
-        // Send the compilation units to the modules
-        StringBuilder result = new StringBuilder();
+    public void sendCUToModules(List<CompilationUnit> compilationUnits) {
+
         for(Module module : modules){
-           result.append(module.compute(compilationUnits)).append("\n");
+          module.compute(compilationUnits);
         }
-        return result.toString();
+
     }
 
 
