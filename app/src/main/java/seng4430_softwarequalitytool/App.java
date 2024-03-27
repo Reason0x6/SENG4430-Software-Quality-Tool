@@ -14,7 +14,7 @@ import java.util.List;
 
 public class App {
     public String getGreeting() {
-        return "Hello SENG4430!";
+        return "SENG4430 Software Quality Tool.";
     }
 
     public static void main(String[] args) throws IOException {
@@ -33,9 +33,8 @@ public class App {
         sourceRoot.tryToParse();
         List<CompilationUnit> compilations = sourceRoot.getCompilationUnits();
 
-
        // Send the compilation units to the modules
-        // TODO: This is where we do our things
+       // TODO: This is where we do our things
        Util util = new Util();
        util.sendCUToModules(compilations);
 
