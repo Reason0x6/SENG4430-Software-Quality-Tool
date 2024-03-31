@@ -15,6 +15,7 @@ public class Polygon {
     }
 
     public void addPoint(Point newPoint){
+        int test = 0;
         polyPoints[savedPoints] = newPoint;
         savedPoints++;
     }
