@@ -1,18 +1,19 @@
 package seng4430_softwarequalitytool.RedundantCode;
 
-import com.github.javaparser.ast.CompilationUnit;
+import java.util.*;
 import com.github.javaparser.ast.NodeList;
-import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
-import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.body.VariableDeclarator;
-import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.stmt.Statement;
-import com.github.javaparser.ast.visitor.VoidVisitor;
-import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import seng4430_softwarequalitytool.Util.Module;
-import java.util.*;
+import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.visitor.VoidVisitor;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.printer.configuration.PrettyPrinterConfiguration;
 
 public class RedundantCode implements Module {
 
@@ -20,7 +21,6 @@ public class RedundantCode implements Module {
     private final Map<String, Integer> unreachableCodeCounts = new HashMap<>();
     // Map to store the count of duplicated code occurrences for each method
     private final Map<String, Integer> duplicatedCodeCounts = new HashMap<>();
-    // Map to store the count of unused code occurrences for each method
     // Set to store the names of unique methods identified during analysis
     private final Set<String> uniqueMethodNames = new HashSet<>();
     // Map to store the method names found during analysis along with the context of their usage
@@ -38,7 +38,7 @@ public class RedundantCode implements Module {
      * @return An empty string on successful execution or an error message if an exception occurs.
      */
     @Override
-    public String compute(List<CompilationUnit> compilationUnits) {
+    public String compute (List<CompilationUnit> compilationUnits) {
         try {
             // Set to store redundant code occurrences
             Set<String> redundantCodeOccurrences = new HashSet<>();
@@ -47,7 +47,7 @@ public class RedundantCode implements Module {
                 // Check and mark unreachable code in the current compilation unit
                 checkUnreachableCode(compilationUnit);
                 // Check and mark duplicated code in the current compilation unit
-                checkDuplicatedCode(compilationUnit, redundantCodeOccurrences);
+                checkDuplicatedCode(compilationUnit);
                 // Check and mark unused code in the current compilation unit
                 checkUnusedCode(compilationUnit);
             }
@@ -70,7 +70,7 @@ public class RedundantCode implements Module {
      * @param compilationUnit The CompilationUnit to analyse.
      * @return The total count of unreachable code lines in the CompilationUnit.
      */
-    private int checkUnreachableCode(CompilationUnit compilationUnit) {
+    private int checkUnreachableCode (CompilationUnit compilationUnit) {
         int methodUnreachableCodeCount;
         // Iterate over method declarations in the modules
         for (MethodDeclaration methodDeclaration : compilationUnit.findAll(MethodDeclaration.class)) {
@@ -99,14 +99,59 @@ public class RedundantCode implements Module {
         return unreachableCodeCounts.values().stream().mapToInt(Integer::intValue).sum();
     }
 
-    private int checkDuplicatedCode(CompilationUnit compilationUnit, Set<String> redundantCodeOccurrences) {
-        return 0;
+    /**
+     * Checks for duplicated code within a given module and update the count of each duplicated method or variable
+     * and increments their count in the global duplicatedCodeCounts map.
+     * @param compilationUnit The compilation unit to be analyzed for duplicated code.
+     */
+    private void checkDuplicatedCode (CompilationUnit compilationUnit) {
+        Set<String> methodsWithDuplicates = new HashSet<>();
+        checkDuplicatedStatements(compilationUnit, methodsWithDuplicates);
+        // Increment the count for each method in duplicatedCodeCounts
+        for (String methodName : methodsWithDuplicates) {
+            duplicatedCodeCounts.put(methodName, duplicatedCodeCounts.getOrDefault(methodName, 0) + 1);
+        }
+    }
+
+    /**
+     * Analyses a given module to identify duplicated statements within its methods.
+     * It updates the provided set with the names of methods containing duplicated code fragments.
+     * The method iterates over all method declarations within the module, examining each
+     * statement in the method bodies. If a statement is found to be a duplicate (already seen in the
+     * current module), the method's name is added to the methodsWithDuplicates set.
+     * @param compilationUnit The module being analszed for duplicated statements.
+     * @param methodsWithDuplicates A set that gets updated with names of methods containing duplicated statements.
+     */
+    private void checkDuplicatedStatements (CompilationUnit compilationUnit, Set<String> methodsWithDuplicates) {
+        // Set to store unique code fragments
+        Set<String> uniqueCodeFragments = new HashSet<>();
+        // Visit each method declaration in the compilation unit
+        for (MethodDeclaration method : compilationUnit.findAll(MethodDeclaration.class)) {
+            String methodName = method.getNameAsString() + "()";
+            BlockStmt body = method.getBody().orElse(null);
+            if (body != null) {
+                List<Statement> statements = body.getStatements();
+                // Traverse through statements and identify code fragments
+                for (Statement statement : statements) {
+                    String codeFragment = statement.toString();
+                    // Check if the current code fragment is unique
+                    if (uniqueCodeFragments.contains(codeFragment)) {
+                        // If it's not unique, add the method name to the set
+                        methodsWithDuplicates.add(methodName);
+                    } else {
+                        // If it's unique, add it to the unique set
+                        uniqueCodeFragments.add(codeFragment);
+                    }
+                }
+            }
+        }
     }
 
     /**
      * Analyses the provided CompilationUnit for unused code, including unused functions and variables.
      * It utilises two separate methods to identify unused functions and variables, updates the global
      * state with the findings, and removes identified used methods from the set of unique methods.
+     *
      * @param compilationUnit The CompilationUnit to analyse for unused code.
      */
     private void checkUnusedCode (CompilationUnit compilationUnit) {
@@ -131,10 +176,10 @@ public class RedundantCode implements Module {
          * the class it belongs to, then recording this information in the provided map.
          *
          * @param method The method declaration being visited.
-         * @param map The map where the class and method names are recorded.
+         * @param map    The map where the class and method names are recorded.
          */
         @Override
-        public void visit(MethodDeclaration method, Map<String, List<String>> map) {
+        public void visit (MethodDeclaration method, Map<String, List<String>> map) {
             // Invoke the parent class's visit method to continue the AST traversal
             super.visit(method, map);
             // Extract the name of the class or interface that contains this method
@@ -153,9 +198,10 @@ public class RedundantCode implements Module {
      * Analyses the provided CompilationUnit for unused functions. It collects all method
      * declarations and method call expressions within each module.
      * Methods that are declared but not called are considered unused.
+     *
      * @param compilationUnit The CompilationUnit to analyse for unused functions.
      */
-    private void unusedFunctions(CompilationUnit compilationUnit) {
+    private void unusedFunctions (CompilationUnit compilationUnit) {
         // Initialise a map to hold class methods mappings
         Map<String, List<String>> classMethodsMap = new HashMap<>();
         // Create and apply a method visitor to populate the classMethodsMap
@@ -185,10 +231,11 @@ public class RedundantCode implements Module {
      * through all methods, checking each variable to see if it is used. Results are stored in a map
      * where each method's name is associated with a string detailing unused variables or indicating
      * that all variables are used.
+     *
      * @param compilationUnit The CompilationUnit to analyse for unused variables.
      * @return A map with method names as keys and details about unused variables as values.
      */
-    private Map<String, String> unUsedVariables(CompilationUnit compilationUnit) {
+    private Map<String, String> unUsedVariables (CompilationUnit compilationUnit) {
         // Initialise a map to hold the unused variables count for each method
         Map<String, String> unusedCodeCounts = new HashMap<>();
         // Iterate over each method declaration within the module
@@ -221,28 +268,34 @@ public class RedundantCode implements Module {
      * This includes the column names for the function name and the counts of various code analysis metrics.
      */
     @Override
-    public void printModuleHeader() {
+    public void printModuleHeader () {
         System.out.println("\n---- Code Analysis Module ----");
-        System.out.format("%-30s %-30s %-20s %-20s %s\n", "Function Name", "Unreachable Code Count", "Duplicated Code", "Function Usage", "Variable Usage");
+        System.out.format("%-30s %-30s %-20s %-20s %s\n", "Function Name", "Unreachable Code Count", "Duplicated code", "Function Usage", "Variable Usage");
     }
 
     /**
      * Iterates through each method and prints out the associated counts of unreachable, duplicated, and unused code.
      * This method assumes all maps have the same keyset, which are the method names.
      */
-    public void printInformation() {
+    public void printInformation () {
         printModuleHeader();
-        // Initialise counters for the totals
-        int totalUnusedCode = 0;
         // Iterate through methods to display their information
         for (String methodName : unreachableCodeCounts.keySet()) {
             int unreachableCodeCount = unreachableCodeCounts.getOrDefault(methodName, 0);
-            int duplicatedCodeCount = duplicatedCodeCounts.getOrDefault(methodName, 0);
-            // Retrieve the used/unused status from unusedCodeCounts
-            String usedStatus = uniqueMethodNames.contains(methodName) ? "Not used" : "used";
+            String unreachableStatus = unreachableCodeCount == 0 ? "Reachable" : "Unreachable";
+
+            // Get the duplication status for the current method
+            int duplicateCodeCount = duplicatedCodeCounts.getOrDefault(methodName + "()", 0);
+            String duplicateStatus = duplicateCodeCount == 0 ? "No" : "Yes";
+
+            String usedStatus = uniqueMethodNames.contains(methodName) ? "Not used" : "Used";
             String unusedVariables = currentUnusedVariables.getOrDefault(methodName, "");
-            // Increment totalUnusedCode if the method is unused
-            System.out.format("%-30s %-30d %-20d %-20s %s\n", methodName + "()", unreachableCodeCount, duplicatedCodeCount, usedStatus, unusedVariables);
+            System.out.format("%-30s %-30s %-20s %-20s %s\n",
+                    methodName + "()",
+                    unreachableStatus,
+                    duplicateStatus,
+                    usedStatus,
+                    unusedVariables);
         }
     }
 
@@ -250,7 +303,7 @@ public class RedundantCode implements Module {
      * Calculates and prints the total counts of unreachable code across all areas analysed.
      */
     @Override
-    public void saveResult() {
+    public void saveResult () {
         int totalUnreachableCode = unreachableCodeCounts.values().stream().mapToInt(Integer::intValue).sum();
         int totalDuplicatedCode = duplicatedCodeCounts.values().stream().mapToInt(Integer::intValue).sum();
         int totalUnusedFunctions = (int) uniqueMethodNames.stream().filter(name -> !foundMethodNames.containsKey(name)).count();
@@ -258,9 +311,9 @@ public class RedundantCode implements Module {
                 .filter(info -> !info.equals("All used"))
                 .count();
         int totalRedundantCodeScore = totalUnreachableCode + totalDuplicatedCode + totalUnusedFunctions + totalMethodsWithUnusedVariables;
-        System.out.println("Total unreachable code count: " + totalUnreachableCode);
-        System.out.println("Total duplicated code count: " + totalDuplicatedCode);
-        System.out.println("Total unused functions count: " + totalUnusedFunctions);
+        System.out.println("Total unreachable code: " + totalUnreachableCode);
+        System.out.println("Total duplicated code: " + totalDuplicatedCode);
+        System.out.println("Total unused functions: " + totalUnusedFunctions);
         System.out.println("Total methods with unused variables count: " + totalMethodsWithUnusedVariables);
         System.out.println("Total redundant code score: " + totalRedundantCodeScore);
     }
