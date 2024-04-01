@@ -62,8 +62,9 @@ public class CyclomaticComplexity implements Module {
         this.CompilationUnits = compilationUnits;
         try{
             printModuleHeader();
-            printInformation();
             this.complexity = calculateCyclomaticComplexity(compilationUnits);
+
+            printInformation();
             saveResult();
             return "Cyclomatic Complexity Successfully Calculated.";
         }catch(Exception e){
