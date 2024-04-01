@@ -7,12 +7,12 @@ import com.github.javaparser.utils.Log;
 import com.github.javaparser.utils.SourceRoot;
 import seng4430_softwarequalitytool.Util.Util;
 
+import java.awt.*;
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 
 public class App {
@@ -32,7 +32,8 @@ public class App {
         // with src/main/resources appended.
         Path pathToSource = Paths.get("src/main/resources/Examples/SENG2200-A1-GAustin");
 
-        String reportFilePath = createFile();
+        File report = createFile();
+        String reportFilePath = report.getAbsolutePath();
         SourceRoot sourceRoot = new SourceRoot(pathToSource);
         sourceRoot.tryToParse();
         List<CompilationUnit> compilations = sourceRoot.getCompilationUnits();
@@ -41,11 +42,14 @@ public class App {
        // TODO: This is where we do our things
        Util util = new Util();
        util.sendCUToModules(compilations, reportFilePath);
+        Desktop desktop = Desktop.getDesktop();
+
+        desktop.open(report);
 
     }
 
 
-    public static String createFile() {
+    public static File createFile() {
 
         // Get the current date and time
         LocalDateTime currentDateTime = LocalDateTime.now();
@@ -90,6 +94,6 @@ public class App {
                 System.err.println("Error closing streams: " + e.getMessage());
             }
         }
-        return destinationFilePath;
+        return destFile;
     }
 }
