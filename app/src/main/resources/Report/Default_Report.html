@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Software Quality Report</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+        <style>
+            .dropdown-menu-end{
+               background-color: #212529;
+            }
+            html {
+                scroll-padding-top: 70px; /* height of sticky header */
+            }
+            .nested-if-table {
+                width: 100%;
+                max-width: 100%;
+                margin-bottom: 1rem;
+                background-color: transparent;
+            }
+          .table-responsive {
+            display: block;
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+          }
+          .nested-if-table th,
+          .nested-if-table td {
+            padding: 5px;
+            text-align: left;
+          }
+        </style>
+    </head>
+    <body>
+        <!-- Responsive navbar-->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+            <div class="container">
+                <a class="navbar-brand" href="#">Start Bootstrap</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Report Sections</a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                <li class="nav-item"><a class="nav-link" href="#Fan">Fan-in/Fan-out</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#Creds">Credentials in code</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#WMC">Weighted methods per class</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#CBO">Coupling between object classes</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#Error">Error Handling</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#Comments">Code Comments & Formatting</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#Cyclomatic">Cyclomatic complexity</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#Command">Command line Parameter Injection</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#Cohesion">Lack of cohesion in methods</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#Fog">Fog index</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#Depth">Depth of conditional nesting</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#Redundant">Redundant code & code duplication</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Page content-->
+        <div class="container">
+            <div class="mt-5">
+                <h1>Seng4430 - Group 1 - Generated Report</h1>
+                <p class="lead">This comprehensive analysis provides invaluable insights into the software's integrity, performance, and adherence to industry standards. Through meticulous examination and advanced metrics, this report aims to empower stakeholders with actionable data to enhance the software's quality and reliability. Dive into the findings to uncover areas of strength, pinpoint opportunities for improvement, and propel your project towards excellence.</p>
+
+                <h2 id="Fan">Fan-in/Fan-out</h2>
+                <p><b>Fan-in:</b> The number of modules depending on a specific module.<br/>
+                <b>Fan-out:</b> The number of modules a specific module depends on.</p>
+                <p>Ref: <a>https://en.wikipedia.org/wiki/Fan-out_(software)</a></p>
+                <!------ FAN IN REPORT VALUES --->
+                <!------ FAN OUT REPORT VALUES --->
+                <hr/>
+                <h2 id="Creds">Credentials in code</h2>
+                <p>How credentials are stored within the codebase & how credentials are utilised within the code for authentication and authorisation purposes.</p>
+                <p>Ref: <a>lmao.com</a></p>
+                <!------ FAN IN REPORT VALUES --->
+                <!------ FAN OUT REPORT VALUES --->
+                <hr/>
+                <h2 id="WMC">Weighted methods per class (WMC)</h2>
+                <p>The complexity of a class by counting its methods, with different weights assigned based on their complexity.</p>
+                <p>Ref: <a>https://en.wikipedia.org/wiki/Fan-out_(software)</a></p>
+                <!------ FAN IN REPORT VALUES --->
+                <!------ FAN OUT REPORT VALUES --->
+                <hr/>
+                <h2 id="CBO">Coupling between object classes (CBO)</h2>
+                <p>Measure of how closely interconnected different classes are within the codebase.</p>
+                <p>Ref: <a>https://en.wikipedia.org/wiki/Fan-out_(software)</a></p>
+                <!------ FAN IN REPORT VALUES --->
+                <!------ FAN OUT REPORT VALUES --->
+                <hr/>
+                <h2 id="Error">Error Handling</h2>
+                <p>How errors and exceptions are managed and processed within the code to maintain stability and robustness.</p>
+                <p>Ref: <a>https://en.wikipedia.org/wiki/Fan-out_(software)</a></p>
+                <!------ FAN IN REPORT VALUES --->
+                <!------ FAN OUT REPORT VALUES --->
+                <hr/>
+                <h2 id="Comments">Code Comments & Formatting</h2>
+                <p>Evaluation of the clarity, consistency, and adequacy of comments and code formatting practices to enhance code readability and maintainability.</p>
+                <p>Ref: <a>https://en.wikipedia.org/wiki/Fan-out_(software)</a></p>
+                <!------ FAN IN REPORT VALUES --->
+                <!------ FAN OUT REPORT VALUES --->
+                <hr/>
+                <h2 id="Cyclomatic">Cyclomatic complexity</h2>
+                <p>Quantitative measure of the complexity of a program based on the number of linearly independent paths through its source code.</p>
+                <p>Ref: <a>https://en.wikipedia.org/wiki/Fan-out_(software)</a></p>
+                <!------ FAN IN REPORT VALUES --->
+                <!------ FAN OUT REPORT VALUES --->
+                <hr/>
+                <h2 id="Command">Command line Parameter Injection</h2>
+                <p>Assessment of security vulnerabilities arising from improper handling of command-line inputs, potentially leading to injection attacks.</p>
+                <p>Ref: <a>https://en.wikipedia.org/wiki/Fan-out_(software)</a></p>
+                <!------ FAN IN REPORT VALUES --->
+                <!------ FAN OUT REPORT VALUES --->
+                <hr/>
+                <h2 id="Cohesion">Lack of cohesion in methods (LCOM)</h2>
+                <p>Evaluation of the degree of cohesion within methods or functions, measuring the strength of the relationships among statements and variables within the same method.</p>
+                <p>Ref: <a>https://en.wikipedia.org/wiki/Fan-out_(software)</a></p>
+                <!------ FAN IN REPORT VALUES --->
+                <!------ FAN OUT REPORT VALUES --->
+                <hr/>
+                <h2 id="Fog">Fog index</h2>
+                <p>Calculation of the readability of a piece of text based on the average number of words per sentence and the percentage of complex words.</p>
+                <p>Ref: <a>https://en.wikipedia.org/wiki/Fan-out_(software)</a></p>
+                <!------ FAN IN REPORT VALUES --->
+                <!------ FAN OUT REPORT VALUES --->
+                <hr/>
+                <h2 id="Depth">Depth of conditional nesting</h2>
+                <p>Analysis of the number of nested conditional statements within the code, indicating its complexity and potential readability issues.</p>
+                <div class="table-responsive">
+                    <table class="table nested-if-table" id="nestedIfTable">
+                        <thead>
+                        <tr>
+                            <th>Function Name</th>
+                            <th>Nested If's</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <p id="nestedIfScore">Nested if's score: </p>
+
+                <hr/>
+                <h2 id="Redundant">Redundant code & code duplication</h2>
+                <p>Identification of duplicate or unnecessary code segments to improve code maintainability and efficiency.</p>
+                <div class="table-responsive">
+                    <table class="table redundant-code-table" id="redundantCodeTable">
+                        <thead>
+                        <tr>
+                            <th>Function Name</th>
+                            <th>Unreachable Code Count</th>
+                            <th>Duplicated code</th>
+                            <th>Function Usage</th>
+                            <th>Variable Usage</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <p id="redundantCodeScore">Redundant code score: </p>
+                <hr/>
+            </div>
+        </div>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+        <script>
+          document.addEventListener('DOMContentLoaded', function() {
+            fetch('../../../nestedIfResults.json')
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById('nestedIfTable').getElementsByTagName('tbody')[0];
+                    let totalScore = 0;
+                    for (const [functionName, score] of Object.entries(data)) {
+                        let row = tableBody.insertRow();
+                        let cell1 = row.insertCell(0);
+                        let cell2 = row.insertCell(1);
+                        cell1.textContent = functionName + "()";
+
+                        // Change display based on the score
+                        cell2.textContent = score > 0 ? `Yes (${score})` : "No";
+
+                        totalScore += parseInt(score, 10);
+                    }
+                    document.getElementById('nestedIfScore').textContent = 'Total nested if\'s score: ' + totalScore;
+                })
+                .catch(error => console.error('Error loading the nested if results:', error));
+         });
+        </script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                fetch('../../../redundantCode.json')
+                    .then(response => response.json())
+                    .then(data => {
+                        const tableBody = document.getElementById('redundantCodeTable').getElementsByTagName('tbody')[0];
+
+                        // Iterate over the keys in unreachableCodeCounts
+                        Object.keys(data.unreachableCodeCounts).forEach(methodName => {
+                            let row = tableBody.insertRow();
+                            let functionNameCell = row.insertCell(0);
+                            functionNameCell.textContent = methodName + "()";
+
+                            let unreachableCodeCountCell = row.insertCell(1);
+                            let unreachableCodeCount = data.unreachableCodeCounts[methodName];
+                            unreachableCodeCountCell.textContent = unreachableCodeCount === 0 ? "Reachable" : "Unreachable (" + unreachableCodeCount + ")";
+
+                            let duplicatedCodeCell = row.insertCell(2);
+                            let duplicatedCodeCount = data.duplicatedCodeCounts[methodName + "()"] || 0;
+                            duplicatedCodeCell.textContent = duplicatedCodeCount > 0 ? "Yes (" + duplicatedCodeCount + ")" : "No";
+
+                            let functionUsageCell = row.insertCell(3);
+                            functionUsageCell.textContent = data.uniqueMethodNames.includes(methodName) ? "Not used" : "Used";
+
+                            let variableUsageCell = row.insertCell(4);
+                            variableUsageCell.textContent = data.currentUnusedVariables[methodName] || "All used";
+                        });
+
+                        // Display totals
+                        if (data.totals) {
+                            let totalsRow = tableBody.insertRow();
+                            totalsRow.insertCell(0).textContent = "Totals:";
+                            totalsRow.insertCell(1).textContent = "Total unreachable code: " + data.totals.totalUnreachableCode;
+                            totalsRow.insertCell(2).textContent = "Total duplicated code: " + data.totals.totalDuplicatedCode;
+                            totalsRow.insertCell(3).textContent = "Total unused functions: " + data.totals.totalUnusedFunctions;
+                            totalsRow.insertCell(4).textContent = "Total methods with unused variables: " + data.totals.totalMethodsWithUnusedVariables;
+                        }
+                        let grandTotal = data.totals.totalUnreachableCode + data.totals.totalDuplicatedCode + data.totals.totalUnusedFunctions + data.totals.totalMethodsWithUnusedVariables;
+                        document.getElementById('redundantCodeScore').textContent = 'Total redundant code score: ' + grandTotal;
+                    })
+                    .catch(error => console.error('Error loading the redundant code data:', error));
+            });
+        </script>
+    </body>
+</html>

@@ -1,11 +1,14 @@
 package seng4430_softwarequalitytool.RedundantCode;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.stmt.Statement;
+import com.google.gson.Gson;
 import seng4430_softwarequalitytool.Util.Module;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.visitor.VoidVisitor;
@@ -13,7 +16,6 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
-import com.github.javaparser.printer.configuration.PrettyPrinterConfiguration;
 
 public class RedundantCode implements Module {
 
@@ -55,6 +57,38 @@ public class RedundantCode implements Module {
             printInformation();
             // Save the results of the code analysis
             saveResult();
+            // Create a summary object to store all the results
+            Map<String, Object> analysisSummary = new HashMap<>();
+            analysisSummary.put("unreachableCodeCounts", unreachableCodeCounts);
+            analysisSummary.put("duplicatedCodeCounts", duplicatedCodeCounts);
+            analysisSummary.put("uniqueMethodNames", uniqueMethodNames);
+            analysisSummary.put("foundMethodNames", foundMethodNames);
+            analysisSummary.put("currentUnusedVariables", currentUnusedVariables);
+
+            int totalUnreachableCode = unreachableCodeCounts.values().stream().mapToInt(Integer::intValue).sum();
+            int totalDuplicatedCode = duplicatedCodeCounts.values().stream().mapToInt(Integer::intValue).sum();
+            int totalUnusedFunctions = (int) uniqueMethodNames.stream().filter(name -> !foundMethodNames.containsKey(name)).count();
+            int totalMethodsWithUnusedVariables = (int) currentUnusedVariables.values().stream().filter(info -> !info.equals("All used")).count();
+            int totalRedundantCodeScore = totalUnreachableCode + totalDuplicatedCode + totalUnusedFunctions + totalMethodsWithUnusedVariables;
+
+            Map<String, Integer> totals = new HashMap<>();
+            totals.put("totalUnreachableCode", totalUnreachableCode);
+            totals.put("totalDuplicatedCode", totalDuplicatedCode);
+            totals.put("totalUnusedFunctions", totalUnusedFunctions);
+            totals.put("totalMethodsWithUnusedVariables", totalMethodsWithUnusedVariables);
+            totals.put("totalRedundantCodeScore", totalRedundantCodeScore);
+            analysisSummary.put("totals", totals);
+
+            // Convert the summary object to JSON
+            Gson gson = new Gson();
+            String jsonResults = gson.toJson(analysisSummary);
+            // Write the JSON to a file
+            try (FileWriter writer = new FileWriter("redundantCode.json")) {
+                writer.write(jsonResults);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return "Error Saving Redundant Code results to file.";
+            }
             // Return an empty string to indicate successful completion
             return "";
         } catch (Exception e) {
