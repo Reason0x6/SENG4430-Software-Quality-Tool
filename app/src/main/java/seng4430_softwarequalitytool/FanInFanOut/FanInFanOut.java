@@ -54,7 +54,7 @@ public class FanInFanOut implements Module {
     }
 
     @Override
-    public String compute(List<CompilationUnit> compilationUnits) {
+    public String compute(List<CompilationUnit> compilationUnits, String filePath) {
         try {
             // Calculate
             calculateFanInFanOut(compilationUnits);

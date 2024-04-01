@@ -29,10 +29,10 @@ public class Util {
         modules.add(new FanInFanOut());
     }
 
-    public void sendCUToModules(List<CompilationUnit> compilationUnits) {
+    public void sendCUToModules(List<CompilationUnit> compilationUnits, String filePath) {
 
         for(Module module : modules){
-          module.compute(compilationUnits);
+          module.compute(compilationUnits, filePath);
         }
 
     }
