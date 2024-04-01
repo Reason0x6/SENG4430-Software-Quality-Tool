@@ -19,7 +19,7 @@ import java.util.List;
 
 public class FogIndex implements Module {
     @Override
-    public String compute(List<CompilationUnit> compilationUnits) {
+    public String compute(List<CompilationUnit> compilationUnits, String filePath) {
         try{
             printModuleHeader();
 
