@@ -77,7 +77,6 @@ public class CyclomaticComplexity implements Module {
 
     private void printToFile(String filePath) {
         String find = " <!------ @@Cyclomatic Output@@  ---->";
-        String replace = this.htmlOutput.toString();
 
         try {
             // Read the content of the file
@@ -91,7 +90,7 @@ public class CyclomaticComplexity implements Module {
             String content = contentBuilder.toString();
 
             // Perform find and replace operation
-            content = content.replaceAll(find, replace);
+            content = content.replaceAll(find, this.htmlOutput.toString());
 
             // Write modified content back to the file
             BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
@@ -122,8 +121,8 @@ public class CyclomaticComplexity implements Module {
 
         this.htmlOutput.append("</div>");
         System.out.println("Avg Complexity Score: " + (this.complexity/this.CompilationUnits.size()) + "\nRisk: " + evaluateRisk( (this.complexity/this.CompilationUnits.size())));
-        this.htmlOutput.append("<p><b>Avg Complexity Score: </b>" + (this.complexity/this.CompilationUnits.size()) + "</p>")
-                .append("<p><b>Risk:</b>" + evaluateRisk( (this.complexity/this.CompilationUnits.size())) + "</p>");
+        this.htmlOutput.append("<br/><p><b>Avg Complexity Score: </b>" + (this.complexity/this.CompilationUnits.size()) + "</p>")
+                .append("<p><b>Risk: </b>" + evaluateRisk( (this.complexity/this.CompilationUnits.size())) + "</p>");
     }
 
 
@@ -137,16 +136,15 @@ public class CyclomaticComplexity implements Module {
 
     public void printClassInformation(String className, int methods){
 
-        this.htmlOutput.append("<div class=\"col-sm-6\">");
+        this.htmlOutput.append("<div class=\"col-sm-12\">");
         this.htmlOutput.append("<table class=\"table\">")
                 .append("<thead class=\"thead-light\">")
                 .append("<tr>")
-                .append("<th scope=\"col\">"+className+"</th>")
-                .append("<th scope=\"col\">Methods: " + methods + "</th>")
+                .append("<th scope=\"col\">"+className+" | Methods: " + methods + "</th>")
+                .append("<th scope=\"col\">Complexity</th>")
                 .append("</tr>")
                 .append("</thead>")
-                .append("<tbody>")
-                .append("<hr />");
+                .append("<tbody>");
 
     }
 
@@ -179,7 +177,7 @@ public class CyclomaticComplexity implements Module {
             this.htmlOutput.append("</tbody>")
                     .append("</table>");
             this.htmlOutput.append("<b>Complexity for: </b>" + className + "() | " + partialComplexity.get());
-            this.htmlOutput.append("</div>");
+            this.htmlOutput.append("</div>").append("<hr/>");
         }
         return totalComplexity.get();
     }
