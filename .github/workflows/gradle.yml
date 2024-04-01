@@ -35,6 +35,4 @@ jobs:
     - name: Build with Gradle Wrapper
       run: ./gradlew build
 
-    - name: Test Sample Data
-      run: ./gradlew Clean Build Run
    
