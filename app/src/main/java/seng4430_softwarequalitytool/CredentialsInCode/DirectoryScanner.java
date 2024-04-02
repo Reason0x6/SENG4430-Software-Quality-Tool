@@ -1,19 +1,21 @@
 package seng4430_softwarequalitytool.CredentialsInCode;
 
-import java.util.Scanner;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.nio.file.Path;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.LineNumberReader;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class DirectoryScanner {
     private Path root;
     private List<File> files;
     private int currentFileIdx;
 
-    private Scanner sc;
+    private LineNumberReader lr;
 
     public DirectoryScanner(Path root) {
         this.root = root;
@@ -29,7 +31,7 @@ public class DirectoryScanner {
         // Initialise the scanner
         this.currentFileIdx = 0;
         try {
-            this.sc = new Scanner(files.get(currentFileIdx));
+            this.lr = new LineNumberReader(new FileReader(getCurrentFile()));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -52,47 +54,27 @@ public class DirectoryScanner {
         }
     }
 
-    public boolean hasNext() {
-        if (sc.hasNext()) {
-            return true;
+    public String nextLine() throws IOException {
+        String next;
+        if ((next = lr.readLine()) != null) {
+            return next;
         }
-        // EOF, check if there is next file to read
-        boolean nextFound = false;
-        while (!nextFound || currentFileIdx < files.size()) {
-            sc = getNextScanner();
-            nextFound = sc.hasNext(); // Ignore empty files
+        // EOF for current file, look for next file
+        if (currentFileIdx < files.size()) {
+            lr = getNextReader();
+            return nextLine();
         }
-        return nextFound;
+        // No more files to read, return null
+        return null;
     }
 
-    /**
-     * Finds and returns the next complete token from this directory scanner.
-     * 
-     * @return the next token
-     */
-    public String next() {
-        if (hasNext()) {
-            return sc.next();
-        }
-        throw new NoSuchElementException();
-    }
-
-    private Scanner getNextScanner() {
-        sc.close();
+    private LineNumberReader getNextReader() throws IOException {
+        lr.close();
         currentFileIdx++;
-
         if (currentFileIdx >= files.size()) {
-            // All files scanned
             throw new NoSuchElementException("All files scanned.");
         }
-
-        try {
-            return new Scanner(files.get(currentFileIdx));
-        } catch (Exception e) {
-            // Should not be reachable
-            e.printStackTrace();
-            return null;
-        }
+        return new LineNumberReader(new FileReader(getCurrentFile()));
     }
 
     /* Getters */
@@ -111,5 +93,9 @@ public class DirectoryScanner {
 
     public File getCurrentFile() {
         return files.get(currentFileIdx);
+    }
+
+    public int getLineNum() {
+        return lr.getLineNumber();
     }
 }
