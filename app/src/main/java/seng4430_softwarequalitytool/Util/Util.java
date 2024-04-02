@@ -2,6 +2,7 @@ package seng4430_softwarequalitytool.Util;
 
 import com.github.javaparser.ast.CompilationUnit;
 import seng4430_softwarequalitytool.CyclomaticComplexity.CyclomaticComplexity;
+import seng4430_softwarequalitytool.DataValidation.BillOfMaterials;
 import seng4430_softwarequalitytool.FogIndex.FogIndex;
 import seng4430_softwarequalitytool.LCOM.LCOM;
 import seng4430_softwarequalitytool.FanInFanOut.FanInFanOut;
@@ -22,6 +23,7 @@ public class Util {
         // Register the modules
         // TODO: Register your modules here
         modules.add(new CyclomaticComplexity());
+        modules.add(new BillOfMaterials());
         modules.add(new NestedIfs());
         modules.add(new RedundantCode());
         modules.add(new FogIndex());
@@ -29,10 +31,10 @@ public class Util {
         modules.add(new FanInFanOut());
     }
 
-    public void sendCUToModules(List<CompilationUnit> compilationUnits) {
+    public void sendCUToModules(List<CompilationUnit> compilationUnits, String filePath) {
 
         for(Module module : modules){
-          module.compute(compilationUnits);
+          module.compute(compilationUnits, filePath);
         }
 
     }
