@@ -42,6 +42,7 @@ public class App {
        // TODO: This is where we do our things
        Util util = new Util();
        util.sendCUToModules(compilations, reportFilePath);
+       util.computeDSModules(pathToSource, reportFilePath);
         Desktop desktop = Desktop.getDesktop();
 
         desktop.open(report);

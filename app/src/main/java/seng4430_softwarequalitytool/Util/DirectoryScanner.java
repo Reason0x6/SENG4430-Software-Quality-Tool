@@ -1,8 +1,7 @@
-package seng4430_softwarequalitytool.CredentialsInCode;
+package seng4430_softwarequalitytool.Util;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.NoSuchElementException;
 import java.nio.file.Path;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,7 +17,7 @@ public class DirectoryScanner {
 
     private LineNumberReader lr;
 
-    public DirectoryScanner(Path root) {
+    public DirectoryScanner(Path root) throws FileNotFoundException {
         this.root = root;
 
         // Get list of files from the root of the project
@@ -31,11 +30,7 @@ public class DirectoryScanner {
 
         // Initialise the scanner
         this.currentFileIdx = 0;
-        try {
-            this.lr = new LineNumberReader(new FileReader(getCurrentFile()));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        this.lr = new LineNumberReader(new FileReader(getCurrentFile()));
     }
 
     /**
@@ -78,6 +73,15 @@ public class DirectoryScanner {
             return Optional.empty();
         }
         return Optional.of(new LineNumberReader(new FileReader(getCurrentFile())));
+    }
+
+    public void reset() throws IOException, FileNotFoundException {
+        if (lr != null && lr.ready()) {
+            lr.close();
+        }
+
+        this.currentFileIdx = 0;
+        this.lr = new LineNumberReader(new FileReader(getCurrentFile()));
     }
 
     /* Getters */

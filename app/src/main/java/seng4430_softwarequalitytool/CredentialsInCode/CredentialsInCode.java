@@ -3,21 +3,19 @@ package seng4430_softwarequalitytool.CredentialsInCode;
 import java.io.FileInputStream;
 import java.util.List;
 import java.util.LinkedList;
-import java.nio.file.Paths;
 import java.util.Scanner;
 import java.io.IOException;
 import java.util.Optional;
 
 import java.util.Properties;
 
-import com.github.javaparser.ast.CompilationUnit;
-
-import seng4430_softwarequalitytool.Util.Module;
+import seng4430_softwarequalitytool.Util.DSModule;
+import seng4430_softwarequalitytool.Util.DirectoryScanner;
 
 /**
  * Checks for hardcoded passwords/API key
  */
-public class CredentialsInCode implements Module {
+public class CredentialsInCode implements DSModule {
 
     private DirectoryScanner ds;
     private Properties properties;
@@ -27,19 +25,21 @@ public class CredentialsInCode implements Module {
     public CredentialsInCode() {
         this.properties = new Properties();
         try {
-            properties.load(new FileInputStream("src/main/resources/DefaultDefinitions/credentials_in_code.properties"));
+            properties
+                    .load(new FileInputStream("src/main/resources/DefaultDefinitions/credentials_in_code.properties"));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         this.credentials = new LinkedList<Credential>();
-        minEntropyRatio = Double.parseDouble(properties.getProperty("min_entropy_ratio"));
+        minEntropyRatio = Double.parseDouble(properties.getProperty("min_entropy"));
     }
 
     @Override
-    public String compute(List<CompilationUnit> compilationUnits, String filePath) {
+    public String compute(DirectoryScanner ds, String filePath) {
+        this.ds = ds;
         try {
-            scanCredentialsInCode(filePath);
+            scanCredentialsInCode();
             // Print report
             printModuleHeader();
             printContent();
@@ -55,13 +55,12 @@ public class CredentialsInCode implements Module {
         }
     }
 
-    private void scanCredentialsInCode(String filePath) throws IOException {
-        ds = new DirectoryScanner(Paths.get(filePath));
+    private void scanCredentialsInCode() throws IOException {
         credentials.clear();
 
         String line;
         while ((line = ds.nextLine()) != null) {
-            Scanner sc = new Scanner(line);
+            Scanner sc = new Scanner(line).useDelimiter("\\s+|=");
             while (sc.hasNext()) {
                 Credential c = getIfAPIKey(sc.next(), minEntropyRatio).orElse(null);
                 if (c != null) {
@@ -76,12 +75,12 @@ public class CredentialsInCode implements Module {
     public void printModuleHeader() {
         System.out.println("\n");
         System.out.println("---- Credentials in Code Module ----");
-        System.out.format("%-25s %8s %16s %8s\n", "File name", "Line", "Token", "Entropy Ratio");
+        System.out.format("%-75s %8s %40s %s\n", "File name", "Line", "Token", "Entropy");
     }
 
     private void printContent() {
         for (Credential c : credentials) {
-            System.out.format("%-25s %8s %16s %8s\n", c.fileName(), c.lineNum(), c.token(), c.entropyRatio());
+            System.out.format("%-75s %8s %40s %.2f\n", c.fileName(), c.lineNum(), c.token(), c.entropyRatio());
         }
     }
 
@@ -104,13 +103,13 @@ public class CredentialsInCode implements Module {
 
     }
 
-    public Optional<Credential> getIfAPIKey(String token, double minEntropyRatio) {
+    public Optional<Credential> getIfAPIKey(String token, double minEntropy) {
         if (token.length() == 0)
             return Optional.empty();
 
-        double entropyRatio = calculateEntropyRatio(token);
-        if (entropyRatio > minEntropyRatio) {
-            return Optional.of(new Credential(ds.getCurrentFile().toString(), ds.getLineNum(), token, entropyRatio));
+        double entropy = calculateEntropy(token);
+        if (entropy > minEntropy) {
+            return Optional.of(new Credential(ds.getCurrentFile().getPath(), ds.getLineNum(), token, entropy));
         }
 
         return Optional.empty();
@@ -118,26 +117,32 @@ public class CredentialsInCode implements Module {
 
     /**
      * String has high entropy ratio -> higher chance that string is an API key.
-     * Algorithm from:
-     * https://github.com/daylen/api-key-detect/blob/master/api_key_detect.py
+     * Calculates the entropy using Shannon's entropy formula.
      * 
      * @param token
      * @return
      */
-    public double calculateEntropyRatio(String token) {
-        if (token.length() == 0)
-            return 0;
-        //
-        int entropy = 0;
-        for (int i = 0; i < token.length() - 1; i++) {
-            char c1 = token.charAt(i);
-            char c2 = token.charAt(i + 1);
-            if (Character.isUpperCase(c1) && Character.isUpperCase(c2) ||
-                    Character.isLowerCase(c1) && Character.isLowerCase(c2) ||
-                    Character.isDigit(c1) && Character.isDigit(c2)) {
-                entropy++;
+    public double calculateEntropy(String token) {
+        // Convert token to byte array
+        byte[] bytes = token.getBytes();
+
+        // Count frequency of each character
+        int[] frequencies = new int[256];
+        for (byte b : bytes) {
+            frequencies[b & 0xFF]++;
+        }
+
+        double entropy = 0;
+        int totalCount = bytes.length;
+
+        // Calculate the entropy using Shannon's entropy formula
+        for (int freq : frequencies) {
+            if (freq > 0) {
+                double probability = (double) freq / totalCount;
+                entropy -= probability * Math.log(probability) / Math.log(2);
             }
         }
-        return (float) entropy / token.length();
+
+        return entropy;
     }
 }

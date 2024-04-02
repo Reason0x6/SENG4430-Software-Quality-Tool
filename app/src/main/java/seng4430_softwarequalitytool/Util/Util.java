@@ -13,9 +13,11 @@ import seng4430_softwarequalitytool.RedundantCode.RedundantCode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.nio.file.Path;
 
 public class Util {
     List<Module> modules = new ArrayList<>();
+    List<DSModule> dsModules = new ArrayList<>();
 
      public Util(){
          registerModules();
@@ -31,13 +33,28 @@ public class Util {
         modules.add(new FogIndex());
         modules.add(new LCOM());
         modules.add(new FanInFanOut());
-        modules.add(new CredentialsInCode());
+
+        dsModules.add(new CredentialsInCode());
     }
 
     public void sendCUToModules(List<CompilationUnit> compilationUnits, String filePath) {
 
         for(Module module : modules){
           module.compute(compilationUnits, filePath);
+        }
+
+    }
+
+    public void computeDSModules(Path pathToSource, String reportFilePath) {
+        try {
+            DirectoryScanner ds = new DirectoryScanner(pathToSource);
+
+            for (DSModule module : dsModules) {
+                module.compute(ds, reportFilePath);
+                ds.reset();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
     }
