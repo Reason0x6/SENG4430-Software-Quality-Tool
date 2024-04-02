@@ -75,12 +75,12 @@ public class CredentialsInCode implements DSModule {
     public void printModuleHeader() {
         System.out.println("\n");
         System.out.println("---- Credentials in Code Module ----");
-        System.out.format("%-75s %8s %40s %s\n", "File name", "Line", "Token", "Entropy");
+        System.out.format("%-75s %8s %50s %s\n", "File name", "Line", "Token", "Entropy");
     }
 
     private void printContent() {
         for (Credential c : credentials) {
-            System.out.format("%-75s %8s %40s %.2f\n", c.fileName(), c.lineNum(), c.token(), c.entropyRatio());
+            System.out.format("%-75s %8s %50s %.2f\n", c.fileName(), c.lineNum(), c.token(), c.entropyRatio());
         }
     }
 
