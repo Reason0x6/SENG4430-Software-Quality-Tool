@@ -1,6 +1,8 @@
 package seng4430_softwarequalitytool.Util;
 
 import com.github.javaparser.ast.CompilationUnit;
+
+import seng4430_softwarequalitytool.CredentialsInCode.CredentialsInCode;
 import seng4430_softwarequalitytool.CyclomaticComplexity.CyclomaticComplexity;
 import seng4430_softwarequalitytool.DataValidation.BillOfMaterials;
 import seng4430_softwarequalitytool.FogIndex.FogIndex;
@@ -29,6 +31,7 @@ public class Util {
         modules.add(new FogIndex());
         modules.add(new LCOM());
         modules.add(new FanInFanOut());
+        modules.add(new CredentialsInCode());
     }
 
     public void sendCUToModules(List<CompilationUnit> compilationUnits, String filePath) {
