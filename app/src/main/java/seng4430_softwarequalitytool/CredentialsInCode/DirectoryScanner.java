@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.LineNumberReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Optional;
 
 public class DirectoryScanner {
     private Path root;
@@ -60,21 +61,23 @@ public class DirectoryScanner {
             return next;
         }
         // EOF for current file, look for next file
-        if (currentFileIdx < files.size()) {
-            lr = getNextReader();
-            return nextLine();
+        lr = getNextReader().orElse(null);
+
+        if (lr == null) {
+            // all files scanned
+            return null;
         }
-        // No more files to read, return null
-        return null;
+        
+        return nextLine();
     }
 
-    private LineNumberReader getNextReader() throws IOException {
+    private Optional<LineNumberReader> getNextReader() throws IOException {
         lr.close();
         currentFileIdx++;
         if (currentFileIdx >= files.size()) {
-            throw new NoSuchElementException("All files scanned.");
+            return Optional.empty();
         }
-        return new LineNumberReader(new FileReader(getCurrentFile()));
+        return Optional.of(new LineNumberReader(new FileReader(getCurrentFile())));
     }
 
     /* Getters */
