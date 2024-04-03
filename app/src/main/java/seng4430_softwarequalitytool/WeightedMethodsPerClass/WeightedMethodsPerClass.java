@@ -36,7 +36,7 @@ public class WeightedMethodsPerClass  implements Module {
     private static int WARNING_LOC_PER_METHOD = 40;
     private List<ClassModel> classes = new ArrayList<>();
     @Override
-    public String compute(List<CompilationUnit> compilationUnits) {
+    public String compute(List<CompilationUnit> compilationUnits, String filePath) {
         //build out models of classes and methods
 
         getClassData(compilationUnits, classes);
