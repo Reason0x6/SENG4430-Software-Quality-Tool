@@ -23,7 +23,7 @@
          * @return A string summarising the maximum if nesting depth for each method in the compilation units.
          */
         @Override
-        public String compute (List<CompilationUnit> compilationUnits) {
+        public String compute(List<CompilationUnit> compilationUnits, String filePath) {
             try {
                 for (CompilationUnit compilationUnit : compilationUnits) {
                     // Iterate through all method declarations in the compilation unit
@@ -56,7 +56,7 @@
         public void printModuleHeader () {
             System.out.println("\n");
             System.out.println("---- Nested If Module ----");
-            System.out.format("%25s %s", "Function Name", "Nested If's\n");
+            System.out.format("%-25s %s", "Function Name", "Nested If's\n");
         }
 
         /**
@@ -67,7 +67,7 @@
         public void printInformation () {
             printModuleHeader();
             for (Map.Entry<String, Integer> entry : nestedIfScores.entrySet()) {
-                System.out.format("%25s %d\n", entry.getKey() + "()", entry.getValue());
+                System.out.format("%-25s %d\n", entry.getKey() + "()", entry.getValue());
             }
         }
 
