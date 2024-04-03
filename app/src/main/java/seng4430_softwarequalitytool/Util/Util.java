@@ -1,37 +1,61 @@
 package seng4430_softwarequalitytool.Util;
 
 import com.github.javaparser.ast.CompilationUnit;
+
+import seng4430_softwarequalitytool.CredentialsInCode.CredentialsInCode;
 import seng4430_softwarequalitytool.CyclomaticComplexity.CyclomaticComplexity;
+import seng4430_softwarequalitytool.DataValidation.BillOfMaterials;
+import seng4430_softwarequalitytool.FogIndex.FogIndex;
+import seng4430_softwarequalitytool.LCOM.LCOM;
+import seng4430_softwarequalitytool.FanInFanOut.FanInFanOut;
 import seng4430_softwarequalitytool.NestedIfs.NestedIfs;
 import seng4430_softwarequalitytool.RedundantCode.RedundantCode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.nio.file.Path;
 
 public class Util {
     List<Module> modules = new ArrayList<>();
+    List<DSModule> dsModules = new ArrayList<>();
 
      public Util(){
-        regesiterModules();
+         registerModules();
     }
 
-    public  void regesiterModules() {
+    public  void registerModules() {
         // Register the modules
         // TODO: Register your modules here
         modules.add(new CyclomaticComplexity());
+        modules.add(new BillOfMaterials());
         modules.add(new NestedIfs());
         modules.add(new RedundantCode());
+        modules.add(new FogIndex());
+        modules.add(new LCOM());
+        modules.add(new FanInFanOut());
+
+        dsModules.add(new CredentialsInCode());
     }
 
-    public  String sendCUToModules(List<CompilationUnit> compilationUnits) {
-        // Send the compilation units to the modules
-        StringBuilder result = new StringBuilder();
+    public void sendCUToModules(List<CompilationUnit> compilationUnits, String filePath) {
+
         for(Module module : modules){
-           result.append(module.compute(compilationUnits)).append("\n");
+          module.compute(compilationUnits, filePath);
         }
-        return result.toString();
+
     }
 
+    public void computeDSModules(Path pathToSource, String reportFilePath) {
+        try {
+            DirectoryScanner ds = new DirectoryScanner(pathToSource);
 
+            for (DSModule module : dsModules) {
+                module.compute(ds, reportFilePath);
+                ds.reset();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
+    }
 }
