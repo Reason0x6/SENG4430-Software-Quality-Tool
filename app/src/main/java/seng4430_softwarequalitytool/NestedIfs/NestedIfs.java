@@ -20,6 +20,11 @@
             nestedIfScores = new HashMap<>();
         }
 
+        @Override
+        public String compute(List<CompilationUnit> compilationUnits) {
+            return null;
+        }
+
         /**
          * Computes the maximum depth of nested 'if' statements across all provided project files.
          * @param compilationUnits A list of CompilationUnit objects to be analyzed.

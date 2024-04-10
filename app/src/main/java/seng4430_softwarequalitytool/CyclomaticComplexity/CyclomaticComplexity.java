@@ -59,6 +59,11 @@ public class CyclomaticComplexity implements Module {
     }
 
     @Override
+    public String compute(List<CompilationUnit> compilationUnits) {
+        return null;
+    }
+
+    @Override
     public String compute(List<CompilationUnit> compilationUnits, String filePath) {
         this.CompilationUnits = compilationUnits;
         try{

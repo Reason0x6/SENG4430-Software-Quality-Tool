@@ -297,6 +297,11 @@ public class RedundantCode implements Module {
         return unusedCodeCounts;
     }
 
+    @Override
+    public String compute(List<CompilationUnit> compilationUnits, String filePath) {
+        return null;
+    }
+
     /**
      * Prints the header for the code analysis module output.
      * This includes the column names for the function name and the counts of various code analysis metrics.

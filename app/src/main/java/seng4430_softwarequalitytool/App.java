@@ -30,7 +30,8 @@ public class App {
         // SourceRoot is a tool that read and writes Java files from packages on a certain root directory.
         // In this case the root directory is found by taking the root from the current Maven module,
         // with src/main/resources appended.
-        Path pathToSource = Paths.get("src/main/resources/Examples/SENG2200-A1-GAustin");
+//        Path pathToSource = Paths.get("src/main/resources/Examples/SENG2200-A1-GAustin");
+        Path pathToSource = Paths.get("src/main/java/seng4430_softwarequalitytool");
 
         File report = createFile();
         String reportFilePath = report.getAbsolutePath();

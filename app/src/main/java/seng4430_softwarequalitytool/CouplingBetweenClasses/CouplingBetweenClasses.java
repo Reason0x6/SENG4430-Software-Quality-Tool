@@ -22,6 +22,12 @@ import static seng4430_softwarequalitytool.Util.ClassModel.getClassData;
  */
 public class CouplingBetweenClasses implements Module {
     private List<ClassModel> classes = new ArrayList<>();
+
+    @Override
+    public String compute(List<CompilationUnit> compilationUnits) {
+        return null;
+    }
+
     @Override
     public String compute(List<CompilationUnit> compilationUnits, String filePath) {
         //build out models of classes and methods
