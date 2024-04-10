@@ -33,7 +33,7 @@ public class Util {
         modules.add(new NestedIfs());
         modules.add(new RedundantCode());
         modules.add(new FogIndex());
-        modules.add(new LCOM());
+        //modules.add(new LCOM());
         modules.add(new FanInFanOut());
         modules.add(new CouplingBetweenClasses());
         modules.add(new WeightedMethodsPerClass());

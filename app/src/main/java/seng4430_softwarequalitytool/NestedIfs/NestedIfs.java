@@ -7,8 +7,7 @@
     import com.github.javaparser.ast.stmt.IfStmt;
     import com.google.gson.Gson;
 
-    import java.io.FileWriter;
-    import java.io.IOException;
+    import java.io.*;
     import java.util.HashMap;
     import java.util.List;
     import java.util.Map;
@@ -46,12 +45,7 @@
                 printInformation();
                 saveResult();
                 Gson gson = new Gson();
-                try (FileWriter writer = new FileWriter("nestedIfResults.json")) {
-                    gson.toJson(nestedIfScores, writer);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return "Error Saving Nested If results to file.";
-                }
+                printToFile(filePath, gson.toJson(nestedIfScores));
 
                 return "Nested If's Successfully Calculated.";
             } catch(Exception e){
@@ -130,5 +124,30 @@
             }
             // Return the maximum depth found between the 'then' and 'else' branches
             return Math.max(thenBranchDepth, elseBranchDepth);
+        }
+
+
+        private void printToFile(String filePath, String jsonResults) {
+            String find = "@@nested if code response here@@";
+            try {
+                // Read the content of the file
+                BufferedReader reader = new BufferedReader(new FileReader(filePath));
+                StringBuilder contentBuilder = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    contentBuilder.append(line).append("\n");
+                }
+                reader.close();
+                String content = contentBuilder.toString();
+                // Perform find and replace operation
+                content = content.replaceAll(find, jsonResults);
+                // Write modified content back to the file
+                BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
+                writer.write(content);
+                writer.close();
+
+            } catch (IOException e) {
+                System.err.println("Error: " + e.getMessage());
+            }
         }
     }

@@ -1,7 +1,6 @@
 package seng4430_softwarequalitytool.RedundantCode;
 
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.expr.NameExpr;
@@ -40,7 +39,7 @@ public class RedundantCode implements Module {
      * @return An empty string on successful execution or an error message if an exception occurs.
      */
     @Override
-    public String compute (List<CompilationUnit> compilationUnits) {
+    public String compute(List<CompilationUnit> compilationUnits, String filePath) {
         try {
             // Set to store redundant code occurrences
             Set<String> redundantCodeOccurrences = new HashSet<>();
@@ -82,16 +81,12 @@ public class RedundantCode implements Module {
             // Convert the summary object to JSON
             Gson gson = new Gson();
             String jsonResults = gson.toJson(analysisSummary);
-            // Write the JSON to a file
-            try (FileWriter writer = new FileWriter("redundantCode.json")) {
-                writer.write(jsonResults);
-            } catch (IOException e) {
-                e.printStackTrace();
-                return "Error Saving Redundant Code results to file.";
-            }
+            printToFile(filePath, jsonResults);
             // Return an empty string to indicate successful completion
             return "";
         } catch (Exception e) {
+            printToFile(filePath, "{}");
+            System.out.println("Error: " + e.getMessage());
             // Return an error message if an exception occurs during the analysis
             return "Error Calculating Redundant Code.";
         }
@@ -351,4 +346,30 @@ public class RedundantCode implements Module {
         System.out.println("Total methods with unused variables count: " + totalMethodsWithUnusedVariables);
         System.out.println("Total redundant code score: " + totalRedundantCodeScore);
     }
+
+    private void printToFile(String filePath, String jsonResults) {
+        String find = "@@Redudant code response here@@";
+        System.out.println("Writing results to file: " + jsonResults);
+        try {
+            // Read the content of the file
+            BufferedReader reader = new BufferedReader(new FileReader(filePath));
+            StringBuilder contentBuilder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                contentBuilder.append(line).append("\n");
+            }
+            reader.close();
+            String content = contentBuilder.toString();
+            // Perform find and replace operation
+            content = content.replaceAll(find, jsonResults);
+            // Write modified content back to the file
+            BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
+            writer.write(content);
+            writer.close();
+
+        } catch (IOException e) {
+            System.err.println("Error: " + e.getMessage());
+        }
+    }
+
 }
