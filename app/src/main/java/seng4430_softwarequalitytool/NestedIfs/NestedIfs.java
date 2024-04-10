@@ -5,7 +5,10 @@
     import com.github.javaparser.ast.Node;
     import com.github.javaparser.ast.body.MethodDeclaration;
     import com.github.javaparser.ast.stmt.IfStmt;
+    import com.google.gson.Gson;
 
+    import java.io.FileWriter;
+    import java.io.IOException;
     import java.util.HashMap;
     import java.util.List;
     import java.util.Map;
@@ -42,6 +45,14 @@
                 // Print information
                 printInformation();
                 saveResult();
+                Gson gson = new Gson();
+                try (FileWriter writer = new FileWriter("nestedIfResults.json")) {
+                    gson.toJson(nestedIfScores, writer);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return "Error Saving Nested If results to file.";
+                }
+
                 return "Nested If's Successfully Calculated.";
             } catch(Exception e){
                 return "Error Calculating Nested If statements.";

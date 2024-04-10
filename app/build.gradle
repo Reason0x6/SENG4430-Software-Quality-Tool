@@ -22,6 +22,8 @@ dependencies {
     // This dependency is used by the application.
     implementation 'com.google.guava:guava:32.1.1-jre'
     implementation group: 'com.github.javaparser', name: 'javaparser-core', version: '3.25.9'
+    // Include Gson for JSON processing
+    implementation 'com.google.code.gson:gson:2.8.9'
 }
 
 // Apply a specific Java toolchain to ease working on different environments.

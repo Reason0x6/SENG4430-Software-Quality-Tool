@@ -1,4 +1,4 @@
-public class SteveTestFile {
+public class SteveNestedIfTestFile {
     public void simpleIf() {
         if (true) {
             System.out.println("Simple If");
@@ -56,6 +56,7 @@ public class SteveTestFile {
     }
 
     public void nestedIfsWithLoops() {
+        int count = 0;
         while (true) {
             if (true) {
                 for (int i = 0; i < 3; i++) {
