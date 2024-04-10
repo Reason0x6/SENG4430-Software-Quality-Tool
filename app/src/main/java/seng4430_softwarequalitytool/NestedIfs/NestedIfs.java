@@ -26,7 +26,7 @@
          * @return A string summarising the maximum if nesting depth for each method in the compilation units.
          */
         @Override
-        public String compute (List<CompilationUnit> compilationUnits) {
+        public String compute(List<CompilationUnit> compilationUnits, String filePath) {
             try {
                 for (CompilationUnit compilationUnit : compilationUnits) {
                     // Iterate through all method declarations in the compilation unit

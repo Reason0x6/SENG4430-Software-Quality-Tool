@@ -17,6 +17,7 @@
             html {
                 scroll-padding-top: 70px; /* height of sticky header */
             }
+
             .nested-if-table {
                 width: 100%;
                 max-width: 100%;
@@ -34,13 +35,39 @@
             padding: 5px;
             text-align: left;
           }
+
+
+             .accordion {
+                 background-color: #eee;
+                 color: #444;
+                 cursor: pointer;
+                 padding: 18px;
+                 width: 100%;
+                 border: none;
+                 text-align: left;
+                 outline: none;
+                 font-size: 15px;
+                 transition: 0.4s;
+             }
+
+            .active, .accordion:hover {
+                background-color: #ccc;
+            }
+
+            .panel {
+                padding: 0 18px;
+                display: none;
+                background-color: white;
+                overflow: hidden;
+            }
+
         </style>
     </head>
     <body>
         <!-- Responsive navbar-->
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
             <div class="container">
-                <a class="navbar-brand" href="#">Start Bootstrap</a>
+                <a class="navbar-brand" href="#">Software Quality Report</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
@@ -55,11 +82,11 @@
                                 <li class="nav-item"><a class="nav-link" href="#Error">Error Handling</a></li>
                                 <li class="nav-item"><a class="nav-link" href="#Comments">Code Comments & Formatting</a></li>
                                 <li class="nav-item"><a class="nav-link" href="#Cyclomatic">Cyclomatic complexity</a></li>
-                                <li class="nav-item"><a class="nav-link" href="#Command">Command line Parameter Injection</a></li>
                                 <li class="nav-item"><a class="nav-link" href="#Cohesion">Lack of cohesion in methods</a></li>
                                 <li class="nav-item"><a class="nav-link" href="#Fog">Fog index</a></li>
                                 <li class="nav-item"><a class="nav-link" href="#Depth">Depth of conditional nesting</a></li>
                                 <li class="nav-item"><a class="nav-link" href="#Redundant">Redundant code & code duplication</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#Bill">Bill Of Materials</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -71,67 +98,89 @@
             <div class="mt-5">
                 <h1>Seng4430 - Group 1 - Generated Report</h1>
                 <p class="lead">This comprehensive analysis provides invaluable insights into the software's integrity, performance, and adherence to industry standards. Through meticulous examination and advanced metrics, this report aims to empower stakeholders with actionable data to enhance the software's quality and reliability. Dive into the findings to uncover areas of strength, pinpoint opportunities for improvement, and propel your project towards excellence.</p>
-
                 <h2 id="Fan">Fan-in/Fan-out</h2>
                 <p><b>Fan-in:</b> The number of modules depending on a specific module.<br/>
                 <b>Fan-out:</b> The number of modules a specific module depends on.</p>
                 <p>Ref: <a>https://en.wikipedia.org/wiki/Fan-out_(software)</a></p>
-                <!------ FAN IN REPORT VALUES --->
-                <!------ FAN OUT REPORT VALUES --->
+                <button class="accordion">View Fan-in/Fan-out Results </button>
+                <div class="panel">
+                    <!------ @@Fan-in/Fan-out Output@@  ---->
+                </div>
                 <hr/>
                 <h2 id="Creds">Credentials in code</h2>
-                <p>How credentials are stored within the codebase & how credentials are utilised within the code for authentication and authorisation purposes.</p>
+                <p>How credentials are stored within the codebase & how credentials are utilised within the code for authentication and authorization purposes.</p>
                 <p>Ref: <a>lmao.com</a></p>
-                <!------ FAN IN REPORT VALUES --->
-                <!------ FAN OUT REPORT VALUES --->
+                <button class="accordion">View Found Credentials </button>
+                <div class="panel">
+                    <!------ @@Credentials Output@@  ---->
+                </div>
                 <hr/>
                 <h2 id="WMC">Weighted methods per class (WMC)</h2>
                 <p>The complexity of a class by counting its methods, with different weights assigned based on their complexity.</p>
                 <p>Ref: <a>https://en.wikipedia.org/wiki/Fan-out_(software)</a></p>
-                <!------ FAN IN REPORT VALUES --->
-                <!------ FAN OUT REPORT VALUES --->
+                <button class="accordion">View WMC Results</button>
+                <div class="panel">
+                    <!------ @@WMC Output@@  ---->
+                </div>
                 <hr/>
                 <h2 id="CBO">Coupling between object classes (CBO)</h2>
                 <p>Measure of how closely interconnected different classes are within the codebase.</p>
                 <p>Ref: <a>https://en.wikipedia.org/wiki/Fan-out_(software)</a></p>
-                <!------ FAN IN REPORT VALUES --->
-                <!------ FAN OUT REPORT VALUES --->
+                <button class="accordion">View CBO Results</button>
+                <div class="panel">
+                    <!------ @@CBO Output@@  ---->
+                </div>
                 <hr/>
                 <h2 id="Error">Error Handling</h2>
                 <p>How errors and exceptions are managed and processed within the code to maintain stability and robustness.</p>
                 <p>Ref: <a>https://en.wikipedia.org/wiki/Fan-out_(software)</a></p>
-                <!------ FAN IN REPORT VALUES --->
-                <!------ FAN OUT REPORT VALUES --->
+                <button class="accordion">View Error Handling Results</button>
+                <div class="panel">
+                    <!------ @@Error Output@@  ---->
+                </div>
                 <hr/>
                 <h2 id="Comments">Code Comments & Formatting</h2>
                 <p>Evaluation of the clarity, consistency, and adequacy of comments and code formatting practices to enhance code readability and maintainability.</p>
                 <p>Ref: <a>https://en.wikipedia.org/wiki/Fan-out_(software)</a></p>
-                <!------ FAN IN REPORT VALUES --->
-                <!------ FAN OUT REPORT VALUES --->
+                <button class="accordion">View Code Comments & Formatting Results</button>
+                <div class="panel">
+                    <!------ @@Code Comments & Formatting Output@@  ---->
+                </div>
                 <hr/>
                 <h2 id="Cyclomatic">Cyclomatic complexity</h2>
                 <p>Quantitative measure of the complexity of a program based on the number of linearly independent paths through its source code.</p>
                 <p>Ref: <a>https://en.wikipedia.org/wiki/Fan-out_(software)</a></p>
-                <!------ FAN IN REPORT VALUES --->
-                <!------ FAN OUT REPORT VALUES --->
-                <hr/>
-                <h2 id="Command">Command line Parameter Injection</h2>
-                <p>Assessment of security vulnerabilities arising from improper handling of command-line inputs, potentially leading to injection attacks.</p>
-                <p>Ref: <a>https://en.wikipedia.org/wiki/Fan-out_(software)</a></p>
-                <!------ FAN IN REPORT VALUES --->
-                <!------ FAN OUT REPORT VALUES --->
+                <button class="accordion">View Cyclomatic complexity Results</button>
+                <div class="panel">
+                    <!------ @@Cyclomatic Output@@  ---->
+                </div>
+
                 <hr/>
                 <h2 id="Cohesion">Lack of cohesion in methods (LCOM)</h2>
                 <p>Evaluation of the degree of cohesion within methods or functions, measuring the strength of the relationships among statements and variables within the same method.</p>
                 <p>Ref: <a>https://en.wikipedia.org/wiki/Fan-out_(software)</a></p>
-                <!------ FAN IN REPORT VALUES --->
-                <!------ FAN OUT REPORT VALUES --->
+                <button class="accordion">View LCOM Results</button>
+                <div class="panel">
+                    <!------ @@LCOM Output@@  ---->
+                </div>
+
                 <hr/>
                 <h2 id="Fog">Fog index</h2>
                 <p>Calculation of the readability of a piece of text based on the average number of words per sentence and the percentage of complex words.</p>
                 <p>Ref: <a>https://en.wikipedia.org/wiki/Fan-out_(software)</a></p>
-                <!------ FAN IN REPORT VALUES --->
-                <!------ FAN OUT REPORT VALUES --->
+              <button class="accordion">View Fog Index Results</button>
+                <div class="panel">
+                    <!------ @@Fog Output@@  ---->
+                </div>
+                <hr/>
+
+                <h2 id="Bill">Bill Of Materials</h2>
+                <p>A bill of materials (BoM) typically refers to a list of dependencies or components used in the project. </p>
+                <button class="accordion">View Bill of Materials</button>
+                <div class="panel">
+                    <!------ @@Bill Of Materials@@  ---->
+                </div>
+                <hr/>
                 <hr/>
                 <h2 id="Depth">Depth of conditional nesting</h2>
                 <p>Analysis of the number of nested conditional statements within the code, indicating its complexity and potential readability issues.</p>
@@ -241,5 +290,6 @@
                     .catch(error => console.error('Error loading the redundant code data:', error));
             });
         </script>
+
     </body>
 </html>
