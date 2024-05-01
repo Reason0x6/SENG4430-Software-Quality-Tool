@@ -5,6 +5,7 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import seng4430_softwarequalitytool.Util.Module;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import seng4430_softwarequalitytool.Util.ClassModel;
@@ -35,13 +36,49 @@ public class WeightedMethodsPerClass  implements Module {
     private static int CAUTION_LOC_PER_METHOD = 20;
     private static int WARNING_LOC_PER_METHOD = 40;
     private List<ClassModel> classes = new ArrayList<>();
+
+    private StringBuilder html = new StringBuilder();
     @Override
     public String compute(List<CompilationUnit> compilationUnits, String filePath) {
         //build out models of classes and methods
 
         getClassData(compilationUnits, classes);
 
-        return "\n***********************\n" + this + "***********************\n";
+        String result = "\n***********************\n" + toString() + "***********************\n";
+        System.out.println(result);
+
+        try{
+            printModuleHeader();
+            printInformation();
+            saveResult();
+            printToFile(filePath);
+            return "Weighted Methods per Class Successfully Calculated.";
+        }catch(Exception e){
+            return "Error Calculating Weighted Methods per Class.";
+        }
+
+    }
+
+    private void printToFile(String filePath) throws IOException {
+        //pattern to find and replace
+        String find = " <!------ @@WMC Output@@  ---->";
+        // Read the content of the file
+        BufferedReader reader = new BufferedReader(new FileReader(filePath));
+        StringBuilder contentBuilder = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            contentBuilder.append(line).append("\n");
+        }
+        reader.close();
+        String content = contentBuilder.toString();
+
+        // Perform find and replace operation
+        content = content.replaceAll(find, this.html.toString());
+
+        // Write modified content back to the file
+        BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
+        writer.write(content);
+        writer.close();
     }
 
     @Override
@@ -52,6 +89,68 @@ public class WeightedMethodsPerClass  implements Module {
     @Override
     public void printInformation() {
 
+        int i = 0;
+        for (ClassModel classModel :
+                classes) {
+            html.append("<table class=\"table\">");
+            html.append("<thead class=\"thead-light\"><tr><th scope=\"col\">" + classModel.name + " | Methods: " + classModel.numberOfMethods + "</th><th scope=\"col\">LOC per Method</th></tr></thead>");
+            int j = 0;
+            html.append("<tbody>");
+            for (MethodModel methodModel :
+                    classModel.methods) {
+                html.append("<tr><td>" + methodModel.id + "</td><td>" + methodModel.linesOfCode + "</td></tr>");
+            }
+            html.append("</tbody>");
+            html.append("</table>");
+            html.append("<table class=\"table\">");
+            html.append("<thead class=\"thead-light\"><tr><th scope=\"col\">Comments</th></tr></thead>");
+            html.append("<tbody>");
+            if (classModel.numberOfMethods > CAUTION_NOM_PER_CLASS && classModel.numberOfMethods < WARNING_NOM_PER_CLASS) {
+                html.append("<tr bgcolor=\"#ECD55E\"><td>Class ")
+                        .append(classModel.name)
+                        .append(" has ")
+                        .append(classModel.numberOfMethods)
+                        .append(" methods. This is over the ")
+                        .append(CAUTION_NOM_PER_CLASS)
+                        .append(" method threshold giving this Class a caution status.</td></tr>");
+            }
+            if (classModel.numberOfMethods >= WARNING_NOM_PER_CLASS) {
+                html.append("<tr bgcolor=\"#F29461\"><td>Class ")
+                        .append(classModel.name)
+                        .append(" has ")
+                        .append(classModel.numberOfMethods)
+                        .append(" methods. This is over the ")
+                        .append(WARNING_NOM_PER_CLASS)
+                        .append(" method threshold giving this Class a warning status.</td></tr>");
+            }
+            for (MethodModel methodModel :
+                    classModel.methods) {
+                if (methodModel.linesOfCode > CAUTION_LOC_PER_METHOD && methodModel.linesOfCode < WARNING_LOC_PER_METHOD) {
+                    html.append("<tr bgcolor=\"#ECD55E\"><td>Method ")
+                            .append(methodModel.name)
+                            .append(" of class ")
+                            .append(classModel.name)
+                            .append(" has ")
+                            .append(methodModel.linesOfCode)
+                            .append(" LOC. This is over the ")
+                            .append(CAUTION_LOC_PER_METHOD)
+                            .append(" LOC threshold giving this Method a caution status.</td></tr>");
+                }
+                if (methodModel.linesOfCode >= WARNING_LOC_PER_METHOD) {
+                    html.append("<tr bgcolor=\"#F29461\"><td>Method ")
+                            .append(classModel.name)
+                            .append(" of class ")
+                            .append(classModel.name)
+                            .append(" has ")
+                            .append(methodModel.linesOfCode)
+                            .append(" LOC. This is over the ")
+                            .append(WARNING_LOC_PER_METHOD)
+                            .append(" LOC threshold giving this Method a warning status.</td></tr>");
+                }
+            }
+            html.append("</tbody>");
+            html.append("</table>");
+        }
     }
 
     @Override
