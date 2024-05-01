@@ -14,40 +14,86 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Scanner;
 
 public class App {
     public String getGreeting() {
         return "SENG4430 Software Quality Tool.";
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         System.out.println(new App().getGreeting());
 
         // JavaParser has a minimal logging class that normally logs nothing.
         // Let's ask it to write to standard out:
         Log.setAdapter(new Log.StandardOutStandardErrorAdapter());
 
-        // SourceRoot is a tool that read and writes Java files from packages on a certain root directory.
-        // In this case the root directory is found by taking the root from the current Maven module,
-        // with src/main/resources appended.
-        Path pathToSource = Paths.get("src/main/resources/Examples/SENG2200-A1-GAustin");
+
 
         File report = createFile();
         String reportFilePath = report.getAbsolutePath();
+
+        Scanner scanner = new Scanner(System.in);
+        try {
+            System.out.println("Software Report Tool: ");
+            System.out.println("Select Option (1) For Introspective Test");
+            System.out.println("Select Option (2) For Example Test");
+            System.out.println("Enter your choice (1 or 2): ");
+            int choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    introspectiveTest(reportFilePath);
+                    break;
+                case 2:
+                    exampleTest(reportFilePath);
+                    break;
+                default:
+                    System.out.println("Invalid choice!");
+            }
+        } catch (java.util.NoSuchElementException e) {
+            System.out.println("Error: Input not found. Please provide valid input.");
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        } finally {
+            scanner.close(); // Close the scanner to release resources
+        }
+
+       Desktop desktop = Desktop.getDesktop();
+
+        desktop.open(report);
+        System.out.println("---------------------------------");
+        System.out.println("-------- Report Completed -------");
+        System.out.println("Output Report: " + reportFilePath);
+        System.out.println("---------------------------------");
+    }
+
+    public static void introspectiveTest(String reportFilePath) throws IOException {
+        System.out.println("Introspective Test Initiated");
+        Path pathToSource = Paths.get("src/main/java/seng4430_softwarequalitytool");
         SourceRoot sourceRoot = new SourceRoot(pathToSource);
         sourceRoot.tryToParse();
         List<CompilationUnit> compilations = sourceRoot.getCompilationUnits();
 
-       // Send the compilation units to the modules
-       // TODO: This is where we do our things
-       Util util = new Util();
-       util.sendCUToModules(compilations, reportFilePath);
-       util.computeDSModules(pathToSource, reportFilePath);
-        Desktop desktop = Desktop.getDesktop();
-
-        desktop.open(report);
-
+        Util util = new Util();
+        util.sendCUToModules(compilations, reportFilePath);
+        util.computeDSModules(pathToSource, reportFilePath);
     }
+
+    public static void exampleTest(String reportFilePath) throws IOException {
+        System.out.println("Example Tests Initiated");
+
+        Path pathToSource = Paths.get("src/main/resources/Examples/SENG2200-A1-GAustin");
+        SourceRoot sourceRoot = new SourceRoot(pathToSource);
+        sourceRoot.tryToParse();
+        List<CompilationUnit> compilations = sourceRoot.getCompilationUnits();
+
+        Util util = new Util();
+        util.sendCUToModules(compilations, reportFilePath);
+        util.computeDSModules(pathToSource, reportFilePath);
+    }
+
+
 
 
     public static File createFile() {
