@@ -1,21 +1,20 @@
 package seng4430_softwarequalitytool.Util;
 
 import com.github.javaparser.ast.CompilationUnit;
-
+import seng4430_softwarequalitytool.CodeCommentsAndFormatting.CodeCommentsAndFormatting;
 import seng4430_softwarequalitytool.CouplingBetweenClasses.CouplingBetweenClasses;
 import seng4430_softwarequalitytool.CredentialsInCode.CredentialsInCode;
 import seng4430_softwarequalitytool.CyclomaticComplexity.CyclomaticComplexity;
 import seng4430_softwarequalitytool.DataValidation.BillOfMaterials;
-import seng4430_softwarequalitytool.FogIndex.FogIndex;
-import seng4430_softwarequalitytool.LCOM.LCOM;
 import seng4430_softwarequalitytool.FanInFanOut.FanInFanOut;
+import seng4430_softwarequalitytool.FogIndex.FogIndex;
 import seng4430_softwarequalitytool.NestedIfs.NestedIfs;
 import seng4430_softwarequalitytool.RedundantCode.RedundantCode;
 import seng4430_softwarequalitytool.WeightedMethodsPerClass.WeightedMethodsPerClass;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.nio.file.Path;
 
 public class Util {
     List<Module> modules = new ArrayList<>();
@@ -37,6 +36,7 @@ public class Util {
         modules.add(new FanInFanOut());
         modules.add(new CouplingBetweenClasses());
         modules.add(new WeightedMethodsPerClass());
+        modules.add(new CodeCommentsAndFormatting());
 
         dsModules.add(new CredentialsInCode());
     }
