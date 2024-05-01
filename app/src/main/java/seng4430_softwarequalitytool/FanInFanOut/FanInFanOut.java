@@ -15,10 +15,16 @@ import java.util.Properties;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.TypeDeclaration;
+import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+import com.github.javaparser.resolution.UnsolvedSymbolException;
+import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
+import com.github.javaparser.resolution.types.ResolvedType;
 
 import seng4430_softwarequalitytool.Util.HTMLTableBuilder;
 import seng4430_softwarequalitytool.Util.Module;
@@ -82,12 +88,12 @@ public class FanInFanOut implements Module {
     public void printModuleHeader() {
         System.out.println("\n");
         System.out.println("---- Fan-in & Fan-out Module ----");
-        System.out.format("%-25s %8s %8s\n", "Function Name", "Fan-in", "Fan-out");
+        System.out.format("%-60s %8s %8s\n", "Function Name", "Fan-in", "Fan-out");
     }
 
     public void printContent() {
         for (String key : fanIns.keySet()) {
-            System.out.format("%-25s %8s %8s\n", key + "()", fanIns.get(key), fanOuts.get(key));
+            System.out.format("%-60s %8s %8s\n", key + "()", fanIns.get(key), fanOuts.get(key));
         }
     }
 
@@ -122,7 +128,7 @@ public class FanInFanOut implements Module {
             HTMLTableBuilder tableBuilder = new HTMLTableBuilder("Fan-in & Fan-out", "Function Name", "Fan-in",
                     "Fan-out");
             for (String key : fanIns.keySet()) {
-                tableBuilder.addRow(key + "()", fanIns.get(key).toString(), fanOuts.get(key).toString());
+                tableBuilder.addRow(key, fanIns.get(key).toString(), fanOuts.get(key).toString());
             }
             content = content.replaceAll(find, tableBuilder.toString());
 
@@ -170,7 +176,7 @@ public class FanInFanOut implements Module {
 
                     // Get method name
                     // TODO: Use fully qualified method name
-                    String methodName = md.getNameAsString();
+                    String methodName = getFullyQualifiedMethodName(cu, td, md);
 
                     // Get method calls inside the method
                     List<String> methodCalls = new ArrayList<>();
@@ -236,11 +242,52 @@ public class FanInFanOut implements Module {
         return fanOuts;
     }
 
+    private String getFullyQualifiedMethodName(CompilationUnit cu, TypeDeclaration<?> td, MethodDeclaration md) {
+        StringBuilder fullyQualifiedName = new StringBuilder();
+
+        // Add the package name
+        String packageName = cu.getPackageDeclaration().map(PackageDeclaration::getNameAsString).orElse("");
+        if (!packageName.isEmpty()) {
+            fullyQualifiedName.append(packageName).append(".");
+        }
+        
+        // Add the class/interface/enum name
+        String typeName = td.getNameAsString();
+        fullyQualifiedName.append(typeName).append(".");
+        
+        // Add method name
+        fullyQualifiedName.append(md.getNameAsString());
+        
+        return fullyQualifiedName.toString();
+    }
+
     private static class MethodCallVisitor extends VoidVisitorAdapter<List<String>> {
         @Override
         public void visit(MethodCallExpr methodCallExpr, List<String> collector) {
             // TODO: Get fully qualified method name from method call expression
-            collector.add(methodCallExpr.getNameAsString());
+            Expression scope = methodCallExpr.getScope().orElse(null);
+            String qualifiedName = "";
+            if (scope != null) {
+                // Try to resolve the scope
+                try {
+                    ResolvedType resolvedType = scope.calculateResolvedType();
+                    String resolvedScope = resolvedType.describe();
+                    String methodName = methodCallExpr.getNameAsString();
+                    qualifiedName = resolvedScope != "" ? resolvedScope + "." + methodName : methodName;
+                } catch (UnsolvedSymbolException e) {
+                    // Do nothing...
+                }
+            } else {
+                // If scope is not found, try to resolve the method directly
+                try {
+                    ResolvedMethodDeclaration rmd = methodCallExpr.resolve();
+                    qualifiedName = rmd.getQualifiedName();
+                } catch (UnsolvedSymbolException e) {
+                    // Do nothing...
+                }
+            }
+
+            collector.add(qualifiedName);
             super.visit(methodCallExpr, collector);
         }
     }
