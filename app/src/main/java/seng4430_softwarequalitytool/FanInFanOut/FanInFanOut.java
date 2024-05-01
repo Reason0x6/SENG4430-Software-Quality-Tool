@@ -1,6 +1,10 @@
 package seng4430_softwarequalitytool.FanInFanOut;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,6 +20,7 @@ import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
+import seng4430_softwarequalitytool.Util.HTMLTableBuilder;
 import seng4430_softwarequalitytool.Util.Module;
 
 /**
@@ -64,6 +69,7 @@ public class FanInFanOut implements Module {
             printContent();
             printInformation();
             saveResult();
+            printToFile(filePath);
 
             return "Fan-in & Fan-out Successfully Calculated.";
         } catch (Exception e) {
@@ -98,6 +104,38 @@ public class FanInFanOut implements Module {
                 "\nFan-out average: " + calculateAverage(fanOuts.values()));
     }
 
+    private void printToFile(String reportFilePath) {
+        String find = "<!------ @@Fan-in/Fan-out Output@@  ---->";
+
+        try {
+            // Read the content of the file
+            BufferedReader reader = new BufferedReader(new FileReader(reportFilePath));
+            StringBuilder contentBuilder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                contentBuilder.append(line).append("\n");
+            }
+            reader.close();
+            String content = contentBuilder.toString();
+
+            // Perform find and replace operation
+            HTMLTableBuilder tableBuilder = new HTMLTableBuilder("Fan-in & Fan-out", "Function Name", "Fan-in",
+                    "Fan-out");
+            for (String key : fanIns.keySet()) {
+                tableBuilder.addRow(key + "()", fanIns.get(key).toString(), fanOuts.get(key).toString());
+            }
+            content = content.replaceAll(find, tableBuilder.toString());
+
+            // Write modified content back to the file
+            BufferedWriter writer = new BufferedWriter(new FileWriter(reportFilePath));
+            writer.write(content);
+            writer.close();
+
+        } catch (IOException e) {
+            System.err.println("Error: " + e.getMessage());
+        }
+    }
+
     /**
      * Calculates an average value from a collection of Integer.
      * From
@@ -126,6 +164,10 @@ public class FanInFanOut implements Module {
                 // Get methods from top level type.
                 List<MethodDeclaration> mds = td.getMethods();
                 for (MethodDeclaration md : mds) {
+                    // skip empty methods
+                    if (md.getBody().isEmpty())
+                        continue;
+
                     // Get method name
                     // TODO: Use fully qualified method name
                     String methodName = md.getNameAsString();
@@ -168,7 +210,8 @@ public class FanInFanOut implements Module {
         // Calculate fan-ins for every methods
         for (Map.Entry<String, List<String>> entry : methodMap.entrySet()) {
             for (String method : entry.getValue()) {
-                if (!fanIns.containsKey(method)) continue;
+                if (!fanIns.containsKey(method))
+                    continue;
                 fanIns.put(method, fanIns.get(method) + 1);
             }
         }
