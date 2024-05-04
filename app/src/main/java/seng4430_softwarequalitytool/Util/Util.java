@@ -6,6 +6,7 @@ import seng4430_softwarequalitytool.CouplingBetweenClasses.CouplingBetweenClasse
 import seng4430_softwarequalitytool.CredentialsInCode.CredentialsInCode;
 import seng4430_softwarequalitytool.CyclomaticComplexity.CyclomaticComplexity;
 import seng4430_softwarequalitytool.DataValidation.BillOfMaterials;
+import seng4430_softwarequalitytool.ErrorHandling.ErrorHandling;
 import seng4430_softwarequalitytool.FanInFanOut.FanInFanOut;
 import seng4430_softwarequalitytool.FogIndex.FogIndex;
 import seng4430_softwarequalitytool.NestedIfs.NestedIfs;
@@ -37,6 +38,7 @@ public class Util {
         modules.add(new CouplingBetweenClasses());
         modules.add(new WeightedMethodsPerClass());
         modules.add(new CodeCommentsAndFormatting());
+        modules.add(new ErrorHandling());
 
         dsModules.add(new CredentialsInCode());
     }
