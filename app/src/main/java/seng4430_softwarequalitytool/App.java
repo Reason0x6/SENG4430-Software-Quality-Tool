@@ -5,6 +5,12 @@ package seng4430_softwarequalitytool;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.utils.Log;
 import com.github.javaparser.utils.SourceRoot;
+import com.github.javaparser.symbolsolver.JavaSymbolSolver;
+import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
+import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeSolver;
+import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
+import com.github.javaparser.symbolsolver.utils.FileUtils;
+
 import seng4430_softwarequalitytool.Util.Util;
 
 import java.awt.*;
@@ -14,7 +20,9 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Scanner;
+
 
 public class App {
     public String getGreeting() {
@@ -26,7 +34,7 @@ public class App {
 
         // JavaParser has a minimal logging class that normally logs nothing.
         // Let's ask it to write to standard out:
-        Log.setAdapter(new Log.StandardOutStandardErrorAdapter());
+        // Log.setAdapter(new Log.StandardOutStandardErrorAdapter());
 
 
 
@@ -71,7 +79,21 @@ public class App {
     public static void introspectiveTest(String reportFilePath) throws IOException {
         System.out.println("Introspective Test Initiated");
         Path pathToSource = Paths.get("src/main/java/seng4430_softwarequalitytool");
+
+        // Set up type solver
+        CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver();
+        // Type solver for java modules
+        combinedTypeSolver.add(new ReflectionTypeSolver());
+        // Type solver for source project
+        List<File> folders = new ArrayList<>();
+        scanForFolders(pathToSource.toFile(), folders);
+        for (File folder : folders) {
+            combinedTypeSolver.add(new JavaParserTypeSolver(folder));
+        }
+        JavaSymbolSolver symbolSolver = new JavaSymbolSolver(combinedTypeSolver);
+
         SourceRoot sourceRoot = new SourceRoot(pathToSource);
+        sourceRoot.getParserConfiguration().setSymbolResolver(symbolSolver); // Configure parser to use type resolution
         sourceRoot.tryToParse();
         List<CompilationUnit> compilations = sourceRoot.getCompilationUnits();
 
@@ -84,7 +106,21 @@ public class App {
         System.out.println("Example Tests Initiated");
 
         Path pathToSource = Paths.get("src/main/resources/Examples/SENG2200-A1-GAustin");
+
+        // Set up type solver
+        CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver();
+        // Type solver for java modules
+        combinedTypeSolver.add(new ReflectionTypeSolver());
+        // Type solver for source project
+        List<File> folders = new ArrayList<>();
+        scanForFolders(pathToSource.toFile(), folders);
+        for (File folder : folders) {
+            combinedTypeSolver.add(new JavaParserTypeSolver(folder));
+        }
+        JavaSymbolSolver symbolSolver = new JavaSymbolSolver(combinedTypeSolver);
+
         SourceRoot sourceRoot = new SourceRoot(pathToSource);
+        sourceRoot.getParserConfiguration().setSymbolResolver(symbolSolver); // Configure parser to use type resolution
         sourceRoot.tryToParse();
         List<CompilationUnit> compilations = sourceRoot.getCompilationUnits();
 
@@ -93,8 +129,15 @@ public class App {
         util.computeDSModules(pathToSource, reportFilePath);
     }
 
-
-
+    private static void scanForFolders(File file, List<File> folders) {
+        if (file.isFile()) {
+            return;
+        }
+        folders.add(file);
+        for (File f : file.listFiles()) {
+            scanForFolders(f, folders);
+        }
+    }
 
     public static File createFile() {
 
