@@ -5,17 +5,17 @@ public class CommentsAndFormattingEvaluationMetrics {
     public CommentsAndFormattingEvaluationMetrics() {
     }
 
-    private String ClassName;
+    private String className;
 
-    private long NumberCommentsInUnit;
+    private long numberCommentsInUnit;
 
-    private long NumberLinesInUnit;
+    private long numberLinesInUnit;
 
-    private long NumberBlockCommentsInUnit;
+    private long numberBlockCommentsInUnit;
 
-    private long NumberMethodsInUnit;
+    private long numberMethodsInUnit;
 
-    private long LinesTooLong;
+    private long linesTooLong;
 
     public int getScore() {
         return ((getCommentScore()*2 + getLinesTooLongScore()) / 3);
@@ -28,10 +28,10 @@ public class CommentsAndFormattingEvaluationMetrics {
     // returns 0-100
     public int getLinesTooLongScore() {
         // devide by 0 is bad and if there is 0 lines then theres nothing wrong
-        if (NumberLinesInUnit == 0) {
+        if (numberLinesInUnit == 0) {
             return 100;
         }
-        float percentTooLong = (((float)LinesTooLong / (float)NumberLinesInUnit) * 100);
+        float percentTooLong = (((float) linesTooLong / (float) numberLinesInUnit) * 100);
         if (percentTooLong <= 5) {
             return 100;
         }
@@ -54,10 +54,10 @@ public class CommentsAndFormattingEvaluationMetrics {
     // 100% score
     private int getInlineCommentScore() {
         // no 0 divide
-        if (NumberLinesInUnit == 0) {
+        if (numberLinesInUnit == 0) {
             return 100;
         }
-        float percentComments = (((float)NumberCommentsInUnit / (float)NumberLinesInUnit) * 100);
+        float percentComments = (((float) numberCommentsInUnit / (float) numberLinesInUnit) * 100);
 
         // returns based on percentage lower then 10
         if (percentComments <= 10) {
@@ -76,8 +76,8 @@ public class CommentsAndFormattingEvaluationMetrics {
     // and 0 returns 0
     private int getBlockCommentScore() {
         // devide by 0 is a sin
-        if (NumberMethodsInUnit == 0) {
-            if (NumberBlockCommentsInUnit < 2) {
+        if (numberMethodsInUnit == 0) {
+            if (numberBlockCommentsInUnit < 2) {
                 return 100;
             }
             else {
@@ -85,64 +85,64 @@ public class CommentsAndFormattingEvaluationMetrics {
             }
         }
 
-        if (NumberBlockCommentsInUnit <= NumberMethodsInUnit) { //
-            return (int)((NumberBlockCommentsInUnit / NumberMethodsInUnit) * 100);
+        if (numberBlockCommentsInUnit <= numberMethodsInUnit) { //
+            return (int)((numberBlockCommentsInUnit / numberMethodsInUnit) * 100);
         }
 
-        if (NumberBlockCommentsInUnit > (NumberMethodsInUnit*2)) { // if more then double theres too many
+        if (numberBlockCommentsInUnit > (numberMethodsInUnit *2)) { // if more then double theres too many
             return 0;
         }
         // more block comments then methods but not double
-        return (int)(100-((NumberBlockCommentsInUnit-NumberMethodsInUnit)/NumberMethodsInUnit));
+        return (int)(100-((numberBlockCommentsInUnit - numberMethodsInUnit)/ numberMethodsInUnit));
     }
 
     public long getLinesTooLong() {
-        return LinesTooLong;
+        return linesTooLong;
     }
 
     public void setLinesTooLong(long linesTooLong) {
-        LinesTooLong = linesTooLong;
+        this.linesTooLong = linesTooLong;
     }
 
     public long getNumberCommentsInUnit() {
-        return NumberCommentsInUnit;
+        return numberCommentsInUnit;
     }
 
     public String getClassName() {
-        return ClassName;
+        return className;
     }
 
     public void setClassName(String className) {
-        ClassName = className;
+        this.className = className;
     }
 
     public void setNumberCommentsInUnit(long numberCommentsInUnit) {
-        NumberCommentsInUnit = numberCommentsInUnit;
+        this.numberCommentsInUnit = numberCommentsInUnit;
     }
 
 
     public long getNumberLinesInUnit() {
-        return NumberLinesInUnit;
+        return numberLinesInUnit;
     }
 
     public void setNumberLinesInUnit(long numberLinesInUnit) {
-        NumberLinesInUnit = numberLinesInUnit;
+        this.numberLinesInUnit = numberLinesInUnit;
     }
 
     public long getNumberBlockCommentsInUnit() {
-        return NumberBlockCommentsInUnit;
+        return numberBlockCommentsInUnit;
     }
 
     public void setNumberBlockCommentsInUnit(long numberBlockCommentsInUnit) {
-        NumberBlockCommentsInUnit = numberBlockCommentsInUnit;
+        this.numberBlockCommentsInUnit = numberBlockCommentsInUnit;
     }
 
     public long getNumberMethodsInUnit() {
-        return NumberMethodsInUnit;
+        return numberMethodsInUnit;
     }
 
     public void setNumberMethodsInUnit(long numberMethodsInUnit) {
-        NumberMethodsInUnit = numberMethodsInUnit;
+        this.numberMethodsInUnit = numberMethodsInUnit;
     }
 
 

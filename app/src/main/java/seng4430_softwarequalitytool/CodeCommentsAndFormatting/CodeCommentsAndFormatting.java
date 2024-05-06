@@ -6,13 +6,16 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.comments.Comment;
 import seng4430_softwarequalitytool.Util.Module;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CodeCommentsAndFormatting implements Module {
 
-    int result;
-    List<CommentsAndFormattingEvaluationMetrics> commentsAndFormattingEvaluationMetricsList = new ArrayList<>();
+    private int result;
+    private List<CommentsAndFormattingEvaluationMetrics> commentsAndFormattingEvaluationMetricsList = new ArrayList<>();
+
+    private StringBuilder htmlOutput = new StringBuilder();
 
 
     @Override
@@ -25,6 +28,7 @@ public class CodeCommentsAndFormatting implements Module {
 
             printInformation();
             saveResult();
+            printToFile(filePath);
 
             return "Comments and Formatting Successfully Calculated.";
         } catch(Exception e){
@@ -36,7 +40,31 @@ public class CodeCommentsAndFormatting implements Module {
     public void printModuleHeader() {
         System.out.println("\n");
         System.out.println("---- Code Commenting and Formatting ----");
-        System.out.format("%-35s %-20s %-20s %-20s %-20s %-20s %s\n", "File Name", "Overall Score", "Formatting Score", "Comment Score", "Lines Too Long", "Comments", "Block Comments");
+        System.out.format(
+                "%-35s %-20s %-20s %-20s %-20s %-20s %s\n",
+                "File Name",
+                "Overall Score",
+                "Formatting Score",
+                "Comment Score",
+                "Lines Too Long",
+                "Comments",
+                "Block Comments"
+        );
+
+        this.htmlOutput.append("<div class=\"col-sm-12\">");
+        this.htmlOutput.append("<table class=\"table\">")
+                .append("<thead class=\"thead-light\">")
+                .append("<tr>")
+                .append("<th scope=\"col\">File Name</th>")
+                .append("<th scope=\"col\">Formatting Score</th>")
+                .append("<th scope=\"col\">Comment Score</th>")
+                .append("<th scope=\"col\">Lines Too Long</th>")
+                .append("<th scope=\"col\">Comments</th>")
+                .append("<th scope=\"col\">Block Comments</th>")
+                .append("<th scope=\"col\">Score</th>")
+                .append("</tr>")
+                .append("</thead>")
+                .append("<tbody>");
     }
 
     @Override
@@ -51,6 +79,16 @@ public class CodeCommentsAndFormatting implements Module {
                     commentsAndFormattingEvaluationMetrics.getLinesTooLong(),
                     commentsAndFormattingEvaluationMetrics.getNumberCommentsInUnit(),
                     commentsAndFormattingEvaluationMetrics.getNumberBlockCommentsInUnit());
+
+            this.htmlOutput.append("<tr>")
+                    .append("<td>"+commentsAndFormattingEvaluationMetrics.getClassName()+"()</td>")
+                    .append("<td>"+commentsAndFormattingEvaluationMetrics.getLinesTooLongScore()+"</td>")
+                    .append("<td>"+commentsAndFormattingEvaluationMetrics.getCommentScore()+"</td>")
+                    .append("<td>"+commentsAndFormattingEvaluationMetrics.getLinesTooLong()+"</td>")
+                    .append("<td>"+commentsAndFormattingEvaluationMetrics.getNumberCommentsInUnit()+"</td>")
+                    .append("<td>"+commentsAndFormattingEvaluationMetrics.getNumberCommentsInUnit()+"</td>")
+                    .append("<td>"+commentsAndFormattingEvaluationMetrics.getScore()+"</td>")
+                    .append("</tr>");
         }
     }
 
@@ -58,7 +96,12 @@ public class CodeCommentsAndFormatting implements Module {
     public void saveResult() {
         calcluateResult();
         System.out.println("---- Result ----");
-        System.out.println("Code Comments and Formatting Score: " + result);
+        System.out.println("Code Comments and Formatting Score: " + result + "/100");
+
+        this.htmlOutput.append("</tbody>")
+                .append("</table>")
+                .append("<b>Code Comments and Formatting Score: </b>" + result + "/100")
+                .append("</div>");
     }
 
     private void calcluateResult()
@@ -127,5 +170,32 @@ public class CodeCommentsAndFormatting implements Module {
             }
         }
         return linesTooLong;
+    }
+
+    private void printToFile(String filePath) {
+        String find = "<!------ @@Code Comments & Formatting Output@@  ---->";
+
+        try {
+            // Read the content of the file
+            BufferedReader reader = new BufferedReader(new FileReader(filePath));
+            StringBuilder contentBuilder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                contentBuilder.append(line).append("\n");
+            }
+            reader.close();
+            String content = contentBuilder.toString();
+
+            // Perform find and replace operation
+            content = content.replaceAll(find, this.htmlOutput.toString());
+
+            // Write modified content back to the file
+            BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
+            writer.write(content);
+            writer.close();
+
+        } catch (IOException e) {
+            System.err.println("Error: " + e.getMessage());
+        }
     }
 }

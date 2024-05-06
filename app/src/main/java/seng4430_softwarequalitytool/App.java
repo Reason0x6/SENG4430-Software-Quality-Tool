@@ -101,7 +101,7 @@ public class App {
         // Get the current date and time
         LocalDateTime currentDateTime = LocalDateTime.now();
 
-        // Define the format for the date and time string
+        // Define the format for the date and time `string`
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH_mm_ss");
 
         // Format the current date and time as a string
