@@ -1,6 +1,10 @@
 package seng4430_softwarequalitytool.CredentialsInCode;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.Scanner;
@@ -11,6 +15,7 @@ import java.util.Properties;
 
 import seng4430_softwarequalitytool.Util.DSModule;
 import seng4430_softwarequalitytool.Util.DirectoryScanner;
+import seng4430_softwarequalitytool.Util.HTMLTableBuilder;
 
 /**
  * Checks for hardcoded passwords/API key
@@ -46,7 +51,7 @@ public class CredentialsInCode implements DSModule {
             printInformation();
             saveResult();
 
-            printToFile();
+            printToFile(filePath);
 
             return "Credentials in Code Successfully Scanned.";
         } catch (IOException e) {
@@ -96,11 +101,42 @@ public class CredentialsInCode implements DSModule {
         System.out.println("Number of potential credentials in code: " + credentials.size());
     }
 
-    /**
-     * TODO: implement print to file
-     */
-    private void printToFile() {
+    private void printToFile(String reportFilePath) {
+        String find = "<!------ @@Credentials Output@@  ---->";
 
+        try {
+            // Read the content of the file
+            BufferedReader reader = new BufferedReader(new FileReader(reportFilePath));
+            StringBuilder contentBuilder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                contentBuilder.append(line).append("\n");
+            }
+            reader.close();
+            String content = contentBuilder.toString();
+
+            // Build html table
+            HTMLTableBuilder tableBuilder = new HTMLTableBuilder("Fan-in & Fan-out", 
+            "File name", "line", "token", "Entropy Ratio");
+            for (Credential credential : credentials) {
+                tableBuilder.addRow(
+                    credential.fileName(), 
+                    "line " + credential.lineNum(), 
+                    credential.token(), 
+                    String.format("%.2f", credential.entropyRatio()));
+            }
+
+            // Perform find and replace operation
+            content = content.replaceAll(find, tableBuilder.toString());
+
+            // Write modified content back to the file
+            BufferedWriter writer = new BufferedWriter(new FileWriter(reportFilePath));
+            writer.write(content);
+            writer.close();
+
+        } catch (IOException e) {
+            System.err.println("Error: " + e.getMessage());
+        }
     }
 
     public Optional<Credential> getIfAPIKey(String token, double minEntropy) {
