@@ -80,11 +80,17 @@ public class CouplingBetweenClasses implements Module {
 
     @Override
     public void printInformation() {
-        html.append("<table class=\"table\">");
+        html.append("<button class=\"btn btn-light\" onclick=\"toggleViewById(\'CBC\')\">Toggle greater detail</button>");
+        html.append("<table class=\"table\" id=\"CBC\" style=\"display:none;\">");
         html.append("<thead class=\"thead-light\"><tr><th scope=\"col\">Class relationship</th>" +
                 "<th scope=\"col\">Total usage</th><th scope=\"col\">Return type usage</th>" +
                 "<th scope=\"col\">Parameter usage</th><th scope=\"col\">member usage</th></tr></thead>");
         html.append("<tbody>");
+        StringBuilder comments = new StringBuilder();
+        comments.append("<table class=\"table\">");
+        comments.append("<thead class=\"thead-light\"><tr><th scope=\"col\">Comments</th></tr></thead>");
+        comments.append("<tbody>");
+        boolean issueFound = false;
         for (int i = 0; i < classes.size(); i++) {
             for (int j = i + 1; j < classes.size(); j++) {
                 ClassModel a = classes.get(i);
@@ -95,37 +101,72 @@ public class CouplingBetweenClasses implements Module {
                 int aUsingB = b.returnTypeDictionary.getOrDefault(a.name,0)
                         + b.parameterDictionary.getOrDefault(a.name,0)
                         + b.memberDictionary.getOrDefault(a.name,0);
+                html.append("<tr>");
+                html.append("<td><span style=\"font-weight:bold;\">" + b.name + "</span> - uses - <span style=\"font-weight:bold;\">" + a.name + "</span></td>");
+                html.append("<td>" +
+                        (a.returnTypeDictionary.getOrDefault(b.name,0)
+                                + a.parameterDictionary.getOrDefault(b.name,0)
+                                + a.memberDictionary.getOrDefault(b.name,0))
+                        + "</td>");
+                html.append("<td>" + a.returnTypeDictionary.getOrDefault(b.name,0) + "</td>");
+                html.append("<td>" + a.parameterDictionary.getOrDefault(b.name,0) + "</td>");
+                html.append("<td>" + a.memberDictionary.getOrDefault(b.name,0) + "</td>");
+                html.append("</tr>");
+                html.append("<tr>");
+                html.append("<td><span style=\"font-weight:bold;\">" + a.name + "</span> - uses - <span style=\"font-weight:bold;\">" + b.name + "</span></td>");
+                html.append("<td>" +
+                        (b.returnTypeDictionary.getOrDefault(a.name,0)
+                                + b.parameterDictionary.getOrDefault(a.name,0)
+                                + b.memberDictionary.getOrDefault(a.name,0))
+                        + "</td>");
+                html.append("<td>" + b.returnTypeDictionary.getOrDefault(a.name,0) + "</td>");
+                html.append("<td>" + b.parameterDictionary.getOrDefault(a.name,0) + "</td>");
+                html.append("<td>" + b.memberDictionary.getOrDefault(a.name,0) + "</td>");
+                html.append("</tr>");
                 if (bUsingA > 4) {
-                    html.append("<tr>");
-                    html.append("<td>" + b.name + " uses " + a.name + "</td>");
-                    html.append("<td>" +
+                    issueFound = true;
+                    comments.append("<tr bgcolor=\"#ECD55E\">");
+                    comments.append("<td><span style=\"font-weight:bold;\">" + b.name + "</span> - uses - <span style=\"font-weight:bold;\">" + a.name + "</span></td>");
+                    comments.append("<td>" +
                             (a.returnTypeDictionary.getOrDefault(b.name,0)
                             + a.parameterDictionary.getOrDefault(b.name,0)
                             + a.memberDictionary.getOrDefault(b.name,0))
                             + "</td>");
-                    html.append("<td>" + a.returnTypeDictionary.getOrDefault(b.name,0) + "</td>");
-                    html.append("<td>" + a.parameterDictionary.getOrDefault(b.name,0) + "</td>");
-                    html.append("<td>" + a.memberDictionary.getOrDefault(b.name,0) + "</td>");
-                    html.append("</tr>");
+                    comments.append("<td>" + a.returnTypeDictionary.getOrDefault(b.name,0) + "</td>");
+                    comments.append("<td>" + a.parameterDictionary.getOrDefault(b.name,0) + "</td>");
+                    comments.append("<td>" + a.memberDictionary.getOrDefault(b.name,0) + "</td>");
+                    comments.append("</tr>");
                 }
                 if (aUsingB > 4) {
-                    html.append("<tr>");
-                    html.append("<td>" + a.name + " uses " + b.name + "</td>");
-                    html.append("<td>" +
+                    issueFound = true;
+                    comments.append("<tr bgcolor=\"#ECD55E\">");
+                    comments.append("<td><span style=\"font-weight:bold;\">" + a.name + "</span> - uses - <span style=\"font-weight:bold;\">" + b.name + "</span></td>");
+                    comments.append("<td>" +
                             (b.returnTypeDictionary.getOrDefault(a.name,0)
                                     + b.parameterDictionary.getOrDefault(a.name,0)
                                     + b.memberDictionary.getOrDefault(a.name,0))
                             + "</td>");
-                    html.append("<td>" + b.returnTypeDictionary.getOrDefault(a.name,0) + "</td>");
-                    html.append("<td>" + b.parameterDictionary.getOrDefault(a.name,0) + "</td>");
-                    html.append("<td>" + b.memberDictionary.getOrDefault(a.name,0) + "</td>");
-                    html.append("</tr>");
+                    comments.append("<td>" + b.returnTypeDictionary.getOrDefault(a.name,0) + "</td>");
+                    comments.append("<td>" + b.parameterDictionary.getOrDefault(a.name,0) + "</td>");
+                    comments.append("<td>" + b.memberDictionary.getOrDefault(a.name,0) + "</td>");
+                    comments.append("</tr>");
                 }
 
             }
         }
         html.append("</tbody>");
         html.append("</table>");
+        comments.append("</tbody>");
+        comments.append("</table>");
+        if (issueFound) {
+            html.append(comments);
+        } else {
+            html.append("<table class=\"table\">");
+            html.append("<thead class=\"thead-light\"><tr><th scope=\"col\">No coupling issues detected in this application</th></tr></thead>");
+            html.append("<tbody>");
+            html.append("</tbody>");
+            html.append("</table>");
+        }
     }
 
     @Override

@@ -92,9 +92,11 @@ public class WeightedMethodsPerClass  implements Module {
         int i = 0;
         for (ClassModel classModel :
                 classes) {
-            html.append("<table class=\"table\">");
+            i++;
+            html.append("<h3>Class: " + classModel.name + "</h3>");
+            html.append("<button class=\"btn btn-light\" onclick=\"toggleViewById(\'WMPC"+i+"-"+"\')\">Toggle greater detail</button>");
+            html.append("<table class=\"table\" id=\"WMPC"+i+"-"+"\" style=\"display:none;\">");
             html.append("<thead class=\"thead-light\"><tr><th scope=\"col\">" + classModel.name + " | Methods: " + classModel.numberOfMethods + "</th><th scope=\"col\">LOC per Method</th></tr></thead>");
-            int j = 0;
             html.append("<tbody>");
             for (MethodModel methodModel :
                     classModel.methods) {
@@ -102,11 +104,14 @@ public class WeightedMethodsPerClass  implements Module {
             }
             html.append("</tbody>");
             html.append("</table>");
-            html.append("<table class=\"table\">");
-            html.append("<thead class=\"thead-light\"><tr><th scope=\"col\">Comments</th></tr></thead>");
-            html.append("<tbody>");
+            StringBuilder comments = new StringBuilder();
+            comments.append("<table class=\"table\">");
+            comments.append("<thead class=\"thead-light\"><tr><th scope=\"col\">Comments</th></tr></thead>");
+            comments.append("<tbody>");
+            boolean commentPresent = false;
             if (classModel.numberOfMethods > CAUTION_NOM_PER_CLASS && classModel.numberOfMethods < WARNING_NOM_PER_CLASS) {
-                html.append("<tr bgcolor=\"#ECD55E\"><td>Class ")
+                commentPresent = true;
+                comments.append("<tr bgcolor=\"#ECD55E\"><td>Class ")
                         .append(classModel.name)
                         .append(" has ")
                         .append(classModel.numberOfMethods)
@@ -115,7 +120,8 @@ public class WeightedMethodsPerClass  implements Module {
                         .append(" method threshold giving this Class a caution status.</td></tr>");
             }
             if (classModel.numberOfMethods >= WARNING_NOM_PER_CLASS) {
-                html.append("<tr bgcolor=\"#F29461\"><td>Class ")
+                commentPresent = true;
+                comments.append("<tr bgcolor=\"#F29461\"><td>Class ")
                         .append(classModel.name)
                         .append(" has ")
                         .append(classModel.numberOfMethods)
@@ -126,7 +132,8 @@ public class WeightedMethodsPerClass  implements Module {
             for (MethodModel methodModel :
                     classModel.methods) {
                 if (methodModel.linesOfCode > CAUTION_LOC_PER_METHOD && methodModel.linesOfCode < WARNING_LOC_PER_METHOD) {
-                    html.append("<tr bgcolor=\"#ECD55E\"><td>Method ")
+                    commentPresent = true;
+                    comments.append("<tr bgcolor=\"#ECD55E\"><td>Method ")
                             .append(methodModel.name)
                             .append(" of class ")
                             .append(classModel.name)
@@ -137,8 +144,9 @@ public class WeightedMethodsPerClass  implements Module {
                             .append(" LOC threshold giving this Method a caution status.</td></tr>");
                 }
                 if (methodModel.linesOfCode >= WARNING_LOC_PER_METHOD) {
-                    html.append("<tr bgcolor=\"#F29461\"><td>Method ")
-                            .append(classModel.name)
+                    commentPresent = true;
+                    comments.append("<tr bgcolor=\"#F29461\"><td>Method ")
+                            .append(methodModel.name)
                             .append(" of class ")
                             .append(classModel.name)
                             .append(" has ")
@@ -148,8 +156,17 @@ public class WeightedMethodsPerClass  implements Module {
                             .append(" LOC threshold giving this Method a warning status.</td></tr>");
                 }
             }
-            html.append("</tbody>");
-            html.append("</table>");
+            comments.append("</tbody>");
+            comments.append("</table>");
+            if(commentPresent){
+                html.append(comments);
+            }else{
+                html.append("<table class=\"table\">");
+                html.append("<thead class=\"thead-light\"><tr><th scope=\"col\">No issues detected in this class</th></tr></thead>");
+                html.append("<tbody>");
+                html.append("</tbody>");
+                html.append("</table>");
+            }
         }
     }
 
