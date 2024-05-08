@@ -2,5 +2,8 @@
 <project version="4">
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_STRING" value="-Xlint:deprecation" />
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="main" options="-Xlint:deprecation --add-modules java.base,java.datatransfer,java.desktop --add-exports java.datatransfer/java.awt=ALL-UNNAMED" />
+    </option>
   </component>
 </project>
