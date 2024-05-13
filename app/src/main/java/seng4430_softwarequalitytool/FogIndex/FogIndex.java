@@ -24,7 +24,7 @@ public class FogIndex implements Module {
             printModuleHeader();
 
 
-
+            // Calculate Fog Index
             printInformation();
             saveResult();
             return "Fog Index Successfully Calculated.";
