@@ -5,6 +5,7 @@ package seng4430_softwarequalitytool;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.utils.Log;
 import com.github.javaparser.utils.SourceRoot;
+import seng4430_softwarequalitytool.Util.DisplayHandler;
 import seng4430_softwarequalitytool.Util.Util;
 
 import java.awt.*;
@@ -24,11 +25,13 @@ public class App {
     public static void main(String[] args) throws IOException, InterruptedException {
         System.out.println(new App().getGreeting());
 
+
         // JavaParser has a minimal logging class that normally logs nothing.
         // Let's ask it to write to standard out:
         Log.setAdapter(new Log.StandardOutStandardErrorAdapter());
 
-
+        //launch JFrame for user input
+        DisplayHandler.createDisplay();
 
         File report = createFile();
         String reportFilePath = report.getAbsolutePath();
@@ -84,6 +87,17 @@ public class App {
         System.out.println("Example Tests Initiated");
 
         Path pathToSource = Paths.get("src/main/resources/Examples/SENG2200-A1-GAustin");
+        SourceRoot sourceRoot = new SourceRoot(pathToSource);
+        sourceRoot.tryToParse();
+        List<CompilationUnit> compilations = sourceRoot.getCompilationUnits();
+
+        Util util = new Util();
+        util.sendCUToModules(compilations, reportFilePath);
+        util.computeDSModules(pathToSource, reportFilePath);
+    }
+    public static void generalTest(String reportFilePath, String sourceDirectory) throws IOException {
+
+        Path pathToSource = Paths.get(sourceDirectory);
         SourceRoot sourceRoot = new SourceRoot(pathToSource);
         sourceRoot.tryToParse();
         List<CompilationUnit> compilations = sourceRoot.getCompilationUnits();
