@@ -33,42 +33,42 @@ public class App {
         //launch JFrame for user input
         DisplayHandler.createDisplay();
 
-        File report = createFile();
-        String reportFilePath = report.getAbsolutePath();
-
-        Scanner scanner = new Scanner(System.in);
-        try {
-            System.out.println("Software Report Tool: ");
-            System.out.println("Select Option (1) For Introspective Test");
-            System.out.println("Select Option (2) For Example Test");
-            System.out.println("Enter your choice (1 or 2): ");
-            int choice = scanner.nextInt();
-
-            switch (choice) {
-                case 1:
-                    introspectiveTest(reportFilePath);
-                    break;
-                case 2:
-                    exampleTest(reportFilePath);
-                    break;
-                default:
-                    System.out.println("Invalid choice!");
-            }
-        } catch (java.util.NoSuchElementException e) {
-            System.out.println("Error: Input not found. Please provide valid input.");
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-        } finally {
-            scanner.close(); // Close the scanner to release resources
-        }
-
-       Desktop desktop = Desktop.getDesktop();
-
-        desktop.open(report);
-        System.out.println("---------------------------------");
-        System.out.println("-------- Report Completed -------");
-        System.out.println("Output Report: " + reportFilePath);
-        System.out.println("---------------------------------");
+//        File report = createFile();
+//        String reportFilePath = report.getAbsolutePath();
+//
+//        Scanner scanner = new Scanner(System.in);
+//        try {
+//            System.out.println("Software Report Tool: ");
+//            System.out.println("Select Option (1) For Introspective Test");
+//            System.out.println("Select Option (2) For Example Test");
+//            System.out.println("Enter your choice (1 or 2): ");
+//            int choice = scanner.nextInt();
+//
+//            switch (choice) {
+//                case 1:
+//                    introspectiveTest(reportFilePath);
+//                    break;
+//                case 2:
+//                    exampleTest(reportFilePath);
+//                    break;
+//                default:
+//                    System.out.println("Invalid choice!");
+//            }
+//        } catch (java.util.NoSuchElementException e) {
+//            System.out.println("Error: Input not found. Please provide valid input.");
+//        } catch (Exception e) {
+//            System.out.println("Error: " + e.getMessage());
+//        } finally {
+//            scanner.close(); // Close the scanner to release resources
+//        }
+//
+//       Desktop desktop = Desktop.getDesktop();
+//
+//        desktop.open(report);
+//        System.out.println("---------------------------------");
+//        System.out.println("-------- Report Completed -------");
+//        System.out.println("Output Report: " + reportFilePath);
+//        System.out.println("---------------------------------");
     }
 
     public static void introspectiveTest(String reportFilePath) throws IOException {
