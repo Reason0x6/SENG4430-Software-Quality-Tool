@@ -29,19 +29,19 @@ public class Util {
     public  void registerModules() {
         // Register the modules
         // TODO: Register your modules here
-        modules.add(new CyclomaticComplexity());
-        modules.add(new BillOfMaterials());
-        modules.add(new NestedIfs());
-        modules.add(new RedundantCode());
-        modules.add(new FogIndex());
+//        modules.add(new CyclomaticComplexity());
+//        modules.add(new BillOfMaterials());
+//        modules.add(new NestedIfs());
+//        modules.add(new RedundantCode());
+       modules.add(new FogIndex());
         //modules.add(new LCOM());
-        modules.add(new FanInFanOut());
-        modules.add(new CouplingBetweenClasses());
-        modules.add(new WeightedMethodsPerClass());
-        modules.add(new CodeCommentsAndFormatting());
-        modules.add(new ErrorHandling());
+//        modules.add(new FanInFanOut());
+//        modules.add(new CouplingBetweenClasses());
+//        modules.add(new WeightedMethodsPerClass());
+//        modules.add(new CodeCommentsAndFormatting());
+//        modules.add(new ErrorHandling());
 
-        dsModules.add(new CredentialsInCode());
+        //dsModules.add(new CredentialsInCode());
     }
 
     public void sendCUToModules(List<CompilationUnit> compilationUnits, String filePath) {
