@@ -1,5 +1,7 @@
 package seng4430_softwarequalitytool.Util;
 
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatLightLaf;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.utils.Log;
 import com.github.javaparser.utils.SourceRoot;
@@ -9,6 +11,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -16,29 +20,92 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public class DisplayHandler {
-    static public String selectedDirectory = "- no directory selected -";
-    public static void createDisplay() {
+    static public String selectedDirectory = "C:\\";
+    File lastFile;
+
+    static {
+        try {
+            selectedDirectory = new File(".").getCanonicalPath();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public  void createDisplay() {
+        FlatDarkLaf.setup();
+
         JFrame frame = new JFrame();
+        JPanel parent = new JPanel();
+        parent.setLayout(new BoxLayout(parent, BoxLayout.Y_AXIS));
+
+        ImageIcon img = new ImageIcon("src/main/resources/Icons/CODEPROBE.png");
+        frame.setIconImage(img.getImage());
+
+        JPanel titlePanel = new JPanel();
+        JLabel title = new JLabel("CodeProbe - Software Testing Tool");
+        title.setAlignmentX(JLabel.CENTER);
+        title.setFont(new Font("Sans Serif", Font.PLAIN, 20));
+
+        JPanel inputPanel = new JPanel();
+        inputPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
 
         JPanel panel = new JPanel();
-        JPanel titlePanel = new JPanel();
+        panel.setLayout(new FlowLayout(FlowLayout.CENTER));
 
+        JPanel actionPanel = new JPanel();
+        actionPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
 
         //page elements
-        JLabel title = new JLabel("CodeProbe - Software Testing Tool");
         JButton selectDirectorybutton = new JButton("Select Directory");
-        JLabel directorySelectionPrompt = new JLabel("Please select the root directory of the test application");
-        JLabel directorySelectionDisplay = new JLabel(selectedDirectory);
+        JLabel directorySelectionPrompt = new JLabel("Please select the root directory of the Java application you wish to test");
+        JTextField  directorySelectionDisplay = new JTextField(selectedDirectory);
         JButton generalTestButton = new JButton("Run Test on Directory");
-        JLabel blankSpace = new JLabel("");
-        JLabel blankSpace2 = new JLabel("");
-        JLabel blankSpace3 = new JLabel("");
-        JButton introspectiveTestButton = new JButton("Test Self");
-        JButton testExampleButton = new JButton("Test Example");
 
+        JButton introspectiveTestButton = new JButton("Test Self");
+
+        JButton testExampleButton = new JButton("Test Example");
+        JButton openLastFileButton = new JButton("Open Last Report");
+        openLastFileButton.setEnabled(false);
+
+        //addition of elements to the page
+        titlePanel.add(title);
+        panel.add(directorySelectionPrompt);
+
+        inputPanel.add(selectDirectorybutton);
+        inputPanel.add(directorySelectionDisplay);
+
+        actionPanel.add(generalTestButton);
+        actionPanel.add(introspectiveTestButton);
+        actionPanel.add(testExampleButton);
+        actionPanel.add(openLastFileButton);
+
+        parent.setPreferredSize(new Dimension(600,200));
+        parent.add(titlePanel);
+        parent.add(panel);
+        parent.add(inputPanel);
+        parent.add(actionPanel);
+
+        frame.getContentPane().add(parent);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setTitle("CodeProbe");
+        frame.setMinimumSize(new Dimension(600,200));
+        frame.pack();
+        frame.setVisible(true);
 
 
         //event listeners
+        frame.addComponentListener(new ComponentAdapter(){
+            public void componentResized(ComponentEvent e){
+                Dimension d=frame.getSize();
+                Dimension minD=frame.getMinimumSize();
+                if(d.width<minD.width)
+                    d.width=minD.width;
+                if(d.height<minD.height)
+                    d.height=minD.height;
+                frame.setSize(d);
+            }
+        });
+
         selectDirectorybutton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -65,6 +132,9 @@ public class DisplayHandler {
                     Desktop desktop = Desktop.getDesktop();
 
                     desktop.open(report);
+                    lastFile = report;
+                    openLastFileButton.setEnabled(true);
+
                 } catch (Exception err) {
                     err.printStackTrace();
                 }
@@ -83,6 +153,8 @@ public class DisplayHandler {
                     Desktop desktop = Desktop.getDesktop();
 
                     desktop.open(report);
+                    lastFile = report;
+                    openLastFileButton.setEnabled(true);
                 } catch (Exception err) {
                     err.printStackTrace();
                 }
@@ -101,41 +173,30 @@ public class DisplayHandler {
                     Desktop desktop = Desktop.getDesktop();
 
                     desktop.open(report);
+                    lastFile = report;
+                    openLastFileButton.setEnabled(true);
                 } catch (Exception err) {
                     err.printStackTrace();
                 }
             }
         });
 
-        //element styling
-        panel.setBorder(BorderFactory.createEmptyBorder(30,30,10,30));
-        panel.setLayout(new GridLayout(9,1));
-        panel.setPreferredSize(new Dimension(600,200));
-        ImageIcon img = new ImageIcon("src/main/resources/Icons/icon.png");
-        frame.setIconImage(img.getImage());
-        title.setAlignmentX(JLabel.CENTER);
-        title.setFont(new Font("Sans Serif", Font.PLAIN, 20));
+        openLastFileButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                openLastFile();
+            }
+        });
+    }
 
-        //addition of elements to the page
-        titlePanel.add(title);
-        panel.add(directorySelectionPrompt);
-        panel.add(selectDirectorybutton);
-        panel.add(directorySelectionDisplay);
-        panel.add(generalTestButton);
-        panel.add(blankSpace);
-        panel.add(blankSpace2);
-        panel.add(blankSpace3);
-        panel.add(introspectiveTestButton);
-        panel.add(testExampleButton);
-
-        JPanel parent = new JPanel();
-        parent.setLayout(new BoxLayout(parent, BoxLayout.Y_AXIS));
-        parent.add(titlePanel);
-        parent.add(panel);
-        frame.getContentPane().add(parent);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setTitle("CodeProbe");
-        frame.pack();
-        frame.setVisible(true);
+    public  void openLastFile(){
+        Desktop desktop = Desktop.getDesktop();
+        try {
+            if(lastFile != null){
+                desktop.open(lastFile);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
