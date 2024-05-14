@@ -32,9 +32,9 @@ import static seng4430_softwarequalitytool.Util.ClassModel.getClassData;
 public class WeightedMethodsPerClass  implements Module {
     //class models potentially moving out of this class for broader use
     private static int CAUTION_NOM_PER_CLASS = 15;
-    private static int WARNING_NOM_PER_CLASS = 20;
+    private static int WARNING_NOM_PER_CLASS = 25;
     private static int CAUTION_LOC_PER_METHOD = 20;
-    private static int WARNING_LOC_PER_METHOD = 40;
+    private static int WARNING_LOC_PER_METHOD = 45;
     private List<ClassModel> classes = new ArrayList<>();
 
     private StringBuilder html = new StringBuilder();
