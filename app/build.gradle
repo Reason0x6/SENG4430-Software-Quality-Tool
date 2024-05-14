@@ -15,7 +15,12 @@ repositories {
     mavenCentral()
 }
 
+test {
+    useJUnitPlatform()
+}
+
 dependencies {
+    implementation 'org.junit.jupiter:junit-jupiter:5.8.1'
     // Use JUnit test framework.
     testImplementation 'junit:junit:4.13.2'
 
@@ -41,6 +46,19 @@ java {
     }
 }
 
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+            exclude('src/main/resources')
+        }
+    }
+    test {
+        java {
+            srcDirs = ['src/test']
+        }
+    }
+}
 
 
 application {

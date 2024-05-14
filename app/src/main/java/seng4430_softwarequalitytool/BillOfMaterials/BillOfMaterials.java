@@ -15,8 +15,8 @@ import java.util.TreeSet;
 
 public class BillOfMaterials implements Module {
 
-    Collection<String> standardLibraries = new TreeSet<String>(Collator.getInstance());
-    Collection<String> nonStandardLibraries = new TreeSet<String>(Collator.getInstance());
+    public Collection<String> standardLibraries = new TreeSet<String>(Collator.getInstance());
+    public Collection<String> nonStandardLibraries = new TreeSet<String>(Collator.getInstance());
 
     private StringBuilder htmlOutput = new StringBuilder();
 
@@ -64,7 +64,7 @@ public class BillOfMaterials implements Module {
         return "";
     }
 
-    private void printToFile(String filePath, String jsonResults, String search) throws FileNotFoundException {
+    public void printToFile(String filePath, String jsonResults, String search) throws FileNotFoundException {
         String find = search;
         Util util = new Util();
         util.fileFindAndReplace(filePath, find, jsonResults);
@@ -85,4 +85,5 @@ public class BillOfMaterials implements Module {
     public void saveResult() {
 
     }
+
 }
