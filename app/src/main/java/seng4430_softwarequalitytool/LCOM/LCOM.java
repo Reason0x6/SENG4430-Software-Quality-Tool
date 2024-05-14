@@ -1,8 +1,6 @@
 package seng4430_softwarequalitytool.LCOM;
 
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
-import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.NameExpr;
@@ -28,7 +26,7 @@ import java.util.*;
 
 public class LCOM implements Module {
 
-    HashMap <String, Double> LCOMs = new HashMap<>();
+    public HashMap <String, Double> LCOMs = new HashMap<>();
     String filePath;
     @Override
     public void printModuleHeader() {
@@ -95,7 +93,7 @@ public class LCOM implements Module {
 
 
 
-    private static double calculateLCOM(Set<String> methods, Map<String, Set<String>> methodFields) {
+    public static double calculateLCOM(Set<String> methods, Map<String, Set<String>> methodFields) {
         int totalReferences = 0;
         int fieldCount = 0;
 
