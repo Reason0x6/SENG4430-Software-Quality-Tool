@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.github.javaparser.ast.visitor.VoidVisitor;
 import com.github.javaparser.utils.Pair;
 import com.google.gson.Gson;
 import seng4430_softwarequalitytool.Util.Module;
@@ -52,8 +53,12 @@ public class CyclomaticComplexity implements Module {
         properties = new Properties();
         try {
             properties.load(new FileInputStream(location));
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            try {
+                properties.load(new FileInputStream("src/main/resources/DefaultDefinitions/risk_ranges.properties"));
+            } catch (Exception e1) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -74,7 +79,7 @@ public class CyclomaticComplexity implements Module {
 
     }
 
-    private void printToFile(String filePath, String jsonResults) throws FileNotFoundException {
+    public void printToFile(String filePath, String jsonResults) throws FileNotFoundException {
         String find = "@@Cyclic Complex Response Here@@";
         Util util = new Util();
         util.fileFindAndReplace(filePath, find, jsonResults);
@@ -118,7 +123,12 @@ public class CyclomaticComplexity implements Module {
         for (CompilationUnit cu : compilationUnits) {
 
             AtomicInteger partialComplexity = new AtomicInteger();
-            String className = cu.getPrimaryTypeName().get();
+
+            List<String> classNameL = new ArrayList<>();
+            VoidVisitor<List<String>> classNameVisitor = new ClassNameCollector();
+
+            classNameVisitor.visit(cu, classNameL);
+            String className = classNameL.get(0);
 
             List<MethodDeclaration> methods = cu.findAll(MethodDeclaration.class);
 
