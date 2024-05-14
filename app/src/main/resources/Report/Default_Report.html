@@ -180,6 +180,19 @@
                 <button class="accordion">View LCOM Results</button>
                 <div class="panel">
                     <!------ @@LCOM Output@@  ---->
+                    <div class="table-responsive">
+                        <table class="table redundant-code-table" id="LCOMTable">
+                            <thead>
+                            <tr>
+                                <th>Class Name</th>
+                                <th>LCOM Score</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>Avg LCOM Score: <span id="LCOMTableScore"></span> | 1 = Fully cohesive, 0 = No cohesion</p>
                 </div>
 
                 <hr/>
@@ -358,7 +371,6 @@
                 let data = JSON.parse(cyclicResp);
                 const tableBody = document.getElementById('complexityTable').getElementsByTagName('tbody')[0];
                 let totalScore = 0;
-                console.log(Object.entries(data));
                 for (const [className, methods] of Object.entries(data)) {
                     if(className === "_Admin_Total"){
                         totalScore = methods[0];
@@ -379,7 +391,7 @@
                         }
                 }
                 document.getElementById('complexityTableScore').innerHTML = 'Average Cyclomatic Complexity of all classes: <b>' + totalScore.b + '</b>, which represents a risk level of: <b>' + totalScore.a + '</b>';
-                console.log( document.getElementById('complexityTableScore'));
+
             });
         </script>
 
@@ -526,6 +538,35 @@
                 }
             });
         </script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                let cyclicResp = '' +
+                    '@@LCOMSCORES@@'
+                    +'';
+                let data = JSON.parse(cyclicResp);
+                const tableBody = document.getElementById('LCOMTable').getElementsByTagName('tbody')[0];
+                let totalScore = 0;
+                for (const x of Object.entries(data)) {
+                        let row = tableBody.insertRow();
+                        let cell1 = row.insertCell(0);
+                        let cell2 = row.insertCell(1);
+                        cell1.textContent = x[0];
+
+                        if(x[1] === "NaN"){
+                            x[1] = "Class is not able to be evaluated - It may be an interface.";
+                        }else{
+
+                            x[1] = parseFloat(Number(x[1]).toFixed(5));
+                            totalScore += x[1];
+                        }
+                    cell2.textContent = x[1];
+
+                }
+
+                document.getElementById('LCOMTableScore').innerHTML = '<b>' + parseFloat((totalScore/ Object.entries(data).length).toFixed(5))  + '</b>';
+            });
+        </script>
+
         <script>
             function toggleViewById(id) {
                 let div = document.getElementById(id);

@@ -9,6 +9,7 @@ import seng4430_softwarequalitytool.CyclomaticComplexity.CyclomaticComplexity;
 import seng4430_softwarequalitytool.ErrorHandling.ErrorHandling;
 import seng4430_softwarequalitytool.FanInFanOut.FanInFanOut;
 import seng4430_softwarequalitytool.FogIndex.FogIndex;
+import seng4430_softwarequalitytool.LCOM.LCOM;
 import seng4430_softwarequalitytool.NestedIfs.NestedIfs;
 import seng4430_softwarequalitytool.RedundantCode.RedundantCode;
 import seng4430_softwarequalitytool.WeightedMethodsPerClass.WeightedMethodsPerClass;
@@ -32,8 +33,8 @@ public class Util {
         modules.add(new BillOfMaterials());
         modules.add(new NestedIfs());
         modules.add(new RedundantCode());
-       modules.add(new FogIndex());
-       //modules.add(new LCOM());
+        modules.add(new FogIndex());
+        modules.add(new LCOM());
         modules.add(new FanInFanOut());
         modules.add(new CouplingBetweenClasses());
         modules.add(new WeightedMethodsPerClass());
