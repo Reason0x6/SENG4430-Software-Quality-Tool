@@ -15,7 +15,12 @@ repositories {
     mavenCentral()
 }
 
+test {
+    useJUnitPlatform()
+}
+
 dependencies {
+    implementation 'org.junit.jupiter:junit-jupiter:5.8.1'
     // Use JUnit test framework.
     testImplementation 'junit:junit:4.13.2'
 
@@ -24,6 +29,10 @@ dependencies {
     implementation 'com.github.javaparser:javaparser-symbol-solver-core:3.25.9'
     // Include Gson for JSON processing
     implementation 'com.google.code.gson:gson:2.8.9'
+
+    // UI Style
+    implementation 'com.formdev:flatlaf:3.4.1'
+
 }
 
 run {
@@ -36,6 +45,21 @@ java {
         languageVersion = JavaLanguageVersion.of(21)
     }
 }
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+            exclude('src/main/resources')
+        }
+    }
+    test {
+        java {
+            srcDirs = ['src/test']
+        }
+    }
+}
+
 
 application {
     // Define the main class for the application.

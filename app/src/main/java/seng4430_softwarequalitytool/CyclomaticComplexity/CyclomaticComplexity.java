@@ -1,17 +1,16 @@
 package seng4430_softwarequalitytool.CyclomaticComplexity;
 
-
-import com.github.javaparser.ast.CompilationUnit;
-import seng4430_softwarequalitytool.Util.Module;
-
-import com.github.javaparser.ast.body.MethodDeclaration;
-
 import java.io.*;
-import java.util.List;
-
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.github.javaparser.ast.visitor.VoidVisitor;
+import com.github.javaparser.utils.Pair;
+import com.google.gson.Gson;
+import seng4430_softwarequalitytool.Util.Module;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import seng4430_softwarequalitytool.Util.Util;
 
 /**
  * Module to compute cyclomatic complexity of Java source code.
@@ -22,20 +21,20 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @studentID 3279166
  * @lastModified: 22/03/2024
  */
-
 public class CyclomaticComplexity implements Module {
 
     /** Properties object to hold risk ranges for cyclomatic complexity. */
     private Properties properties;
     private List<CompilationUnit> CompilationUnits;
     private int complexity = 0;
-
-    private StringBuilder htmlOutput = new StringBuilder();
+    private final Map<String, List<Pair<String, Integer>>> complexityModel;
+    private String finalResult;
 
     /**
      * Constructs a CyclomaticComplexity object using default risk ranges.
      */
     public CyclomaticComplexity() {
+        complexityModel = new HashMap<>();
         properties = new Properties();
         try {
             properties.load(new FileInputStream("src/main/resources/DefaultDefinitions/risk_ranges.properties"));
@@ -50,11 +49,16 @@ public class CyclomaticComplexity implements Module {
      * @param location The file location of the properties file containing risk ranges.
      */
     public CyclomaticComplexity(String location) {
+        complexityModel = new HashMap<>();
         properties = new Properties();
         try {
             properties.load(new FileInputStream(location));
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            try {
+                properties.load(new FileInputStream("src/main/resources/DefaultDefinitions/risk_ranges.properties"));
+            } catch (Exception e1) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -67,7 +71,7 @@ public class CyclomaticComplexity implements Module {
 
             printInformation();
             saveResult();
-            printToFile(filePath);
+            printToFile(filePath,finalResult);
             return "Cyclomatic Complexity Successfully Calculated.";
         }catch(Exception e){
             return "Error Calculating Cyclomatic Complexity.";
@@ -75,77 +79,34 @@ public class CyclomaticComplexity implements Module {
 
     }
 
-    private void printToFile(String filePath) {
-        String find = " <!------ @@Cyclomatic Output@@  ---->";
-
-        try {
-            // Read the content of the file
-            BufferedReader reader = new BufferedReader(new FileReader(filePath));
-            StringBuilder contentBuilder = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                contentBuilder.append(line).append("\n");
-            }
-            reader.close();
-            String content = contentBuilder.toString();
-
-            // Perform find and replace operation
-            content = content.replaceAll(find, this.htmlOutput.toString());
-
-            // Write modified content back to the file
-            BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
-            writer.write(content);
-            writer.close();
-
-        } catch (IOException e) {
-            System.err.println("Error: " + e.getMessage());
-        }
+    public void printToFile(String filePath, String jsonResults) throws FileNotFoundException {
+        String find = "@@Cyclic Complex Response Here@@";
+        Util util = new Util();
+        util.fileFindAndReplace(filePath, find, jsonResults);
     }
 
 
     @Override
-    public  void printModuleHeader(){
+    public void printModuleHeader(){
         System.out.println("---- Cyclomatic Complexity Module ----");
-        this.htmlOutput.append("<div class=\"row\">");
     }
-
 
     @Override
     public void printInformation(){
+        List<Pair<String, Integer>> totalComplexity = new ArrayList<>();
+        int complexityComputed = complexity/CompilationUnits.size();
+        totalComplexity.add(new Pair<>(evaluateRisk(complexityComputed), complexityComputed));
+        complexityModel.put("_Admin_Total", totalComplexity);
 
-        this.htmlOutput.append("<br/><br/><hr style=\"margin-top: 10px;\"/><b>Definitions Used</b><br/><code>" + properties.toString() + "</code>");
+        System.out.println("Total Cyclomatic Complexity: " + complexityComputed);
+        System.out.println("Risk Level: " + evaluateRisk(complexityComputed));
+
     }
 
     @Override
     public void saveResult(){
-
-        this.htmlOutput.append("</div>");
-        System.out.println("Avg Complexity Score: " + (this.complexity/this.CompilationUnits.size()) + "\nRisk: " + evaluateRisk( (this.complexity/this.CompilationUnits.size())));
-        this.htmlOutput.append("<br/><p><b>Avg Complexity Score: </b>" + (this.complexity/this.CompilationUnits.size()) + "</p>")
-                .append("<p><b>Risk: </b>" + evaluateRisk( (this.complexity/this.CompilationUnits.size())) + "</p>");
-    }
-
-
-    public void printRowInformation(String methodName, int complexity){
-
-            this.htmlOutput.append("<tr>")
-                    .append("<td>"+methodName+"()</td>")
-                    .append("<td>"+complexity+"</td>")
-                    .append("</tr>");
-    }
-
-    public void printClassInformation(String className, int methods){
-
-        this.htmlOutput.append("<div class=\"col-sm-12\">");
-        this.htmlOutput.append("<table class=\"table\">")
-                .append("<thead class=\"thead-light\">")
-                .append("<tr>")
-                .append("<th scope=\"col\">"+className+" | Methods: " + methods + "</th>")
-                .append("<th scope=\"col\">Complexity</th>")
-                .append("</tr>")
-                .append("</thead>")
-                .append("<tbody>");
-
+        Gson gson = new Gson();
+        finalResult =  gson.toJson(complexityModel);
     }
 
 
@@ -162,22 +123,24 @@ public class CyclomaticComplexity implements Module {
         for (CompilationUnit cu : compilationUnits) {
 
             AtomicInteger partialComplexity = new AtomicInteger();
-            String className = cu.getPrimaryTypeName().get();
+
+            List<String> classNameL = new ArrayList<>();
+            VoidVisitor<List<String>> classNameVisitor = new ClassNameCollector();
+
+            classNameVisitor.visit(cu, classNameL);
+            String className = classNameL.get(0);
 
             List<MethodDeclaration> methods = cu.findAll(MethodDeclaration.class);
-            this.printClassInformation(className, methods.size());
 
-            methods.forEach(method -> {
-                int complex = calculateMethodComplexity(method);
-                partialComplexity.addAndGet(complex);
-                totalComplexity.addAndGet(complex);
-            });
+            List<Pair<String, Integer>> methodComplexity = new ArrayList<>();
+                    methods.forEach(method -> {
+                        int complex = calculateMethodComplexity(method);
+                        partialComplexity.addAndGet(complex);
+                        totalComplexity.addAndGet(complex);
+                        methodComplexity.add(new Pair<>(method.getNameAsString(), complex));
+                    });
 
-            System.out.println("Complexity for: " + className + "(): " + partialComplexity.get() + "\n");
-            this.htmlOutput.append("</tbody>")
-                    .append("</table>");
-            this.htmlOutput.append("<b>Complexity for: </b>" + className + "() | " + partialComplexity.get());
-            this.htmlOutput.append("</div>").append("<hr/>");
+            complexityModel.put(className, methodComplexity);
         }
         return totalComplexity.get();
     }
@@ -192,7 +155,6 @@ public class CyclomaticComplexity implements Module {
         CyclomaticComplexityVisitor visitor = new CyclomaticComplexityVisitor();
         visitor.visit(method, null);
         int complexity = visitor.getComplexity();
-        printRowInformation(method.getNameAsString(), complexity);
 
         return complexity;
     }
@@ -209,11 +171,9 @@ public class CyclomaticComplexity implements Module {
                 break;
             }
         }
+
         return riskLevel;
     }
-
-
-
 
 }
 

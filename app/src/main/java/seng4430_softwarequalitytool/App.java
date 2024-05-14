@@ -3,14 +3,12 @@ package seng4430_softwarequalitytool;
 
 
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.utils.Log;
 import com.github.javaparser.utils.SourceRoot;
-import seng4430_softwarequalitytool.Util.DisplayHandler;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.CombinedTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeSolver;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
-import com.github.javaparser.symbolsolver.utils.FileUtils;
+import seng4430_softwarequalitytool.Util.DisplayHandler;
 import seng4430_softwarequalitytool.Util.Util;
 
 import java.awt.*;
@@ -21,61 +19,16 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 
 public class App {
-    public String getGreeting() {
-        return "SENG4430 Software Quality Tool.";
-    }
+
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        System.out.println(new App().getGreeting());
-
-
-        // JavaParser has a minimal logging class that normally logs nothing.
-        // Let's ask it to write to standard out:
-        // Log.setAdapter(new Log.StandardOutStandardErrorAdapter());
 
         //launch JFrame for user input
-        DisplayHandler.createDisplay();
+        new DisplayHandler().createDisplay();
 
-//        File report = createFile();
-//        String reportFilePath = report.getAbsolutePath();
-//
-//        Scanner scanner = new Scanner(System.in);
-//        try {
-//            System.out.println("Software Report Tool: ");
-//            System.out.println("Select Option (1) For Introspective Test");
-//            System.out.println("Select Option (2) For Example Test");
-//            System.out.println("Enter your choice (1 or 2): ");
-//            int choice = scanner.nextInt();
-//
-//            switch (choice) {
-//                case 1:
-//                    introspectiveTest(reportFilePath);
-//                    break;
-//                case 2:
-//                    exampleTest(reportFilePath);
-//                    break;
-//                default:
-//                    System.out.println("Invalid choice!");
-//            }
-//        } catch (java.util.NoSuchElementException e) {
-//            System.out.println("Error: Input not found. Please provide valid input.");
-//        } catch (Exception e) {
-//            System.out.println("Error: " + e.getMessage());
-//        } finally {
-//            scanner.close(); // Close the scanner to release resources
-//        }
-//
-//       Desktop desktop = Desktop.getDesktop();
-//
-//        desktop.open(report);
-//        System.out.println("---------------------------------");
-//        System.out.println("-------- Report Completed -------");
-//        System.out.println("Output Report: " + reportFilePath);
-//        System.out.println("---------------------------------");
     }
 
     public static void introspectiveTest(String reportFilePath) throws IOException {
@@ -151,6 +104,7 @@ public class App {
             scanForFolders(f, folders);
         }
     }
+
 
     public static File createFile() {
 

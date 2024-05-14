@@ -1,18 +1,20 @@
 package seng4430_softwarequalitytool.Util;
 
 import com.github.javaparser.ast.CompilationUnit;
+import seng4430_softwarequalitytool.BillOfMaterials.BillOfMaterials;
 import seng4430_softwarequalitytool.CodeCommentsAndFormatting.CodeCommentsAndFormatting;
 import seng4430_softwarequalitytool.CouplingBetweenClasses.CouplingBetweenClasses;
 import seng4430_softwarequalitytool.CredentialsInCode.CredentialsInCode;
 import seng4430_softwarequalitytool.CyclomaticComplexity.CyclomaticComplexity;
-import seng4430_softwarequalitytool.DataValidation.BillOfMaterials;
 import seng4430_softwarequalitytool.ErrorHandling.ErrorHandling;
 import seng4430_softwarequalitytool.FanInFanOut.FanInFanOut;
 import seng4430_softwarequalitytool.FogIndex.FogIndex;
+import seng4430_softwarequalitytool.LCOM.LCOM;
 import seng4430_softwarequalitytool.NestedIfs.NestedIfs;
 import seng4430_softwarequalitytool.RedundantCode.RedundantCode;
 import seng4430_softwarequalitytool.WeightedMethodsPerClass.WeightedMethodsPerClass;
 
+import java.io.*;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,13 +29,12 @@ public class Util {
 
     public  void registerModules() {
         // Register the modules
-        // TODO: Register your modules here
         modules.add(new CyclomaticComplexity());
         modules.add(new BillOfMaterials());
         modules.add(new NestedIfs());
         modules.add(new RedundantCode());
         modules.add(new FogIndex());
-        //modules.add(new LCOM());
+        modules.add(new LCOM());
         modules.add(new FanInFanOut());
         modules.add(new CouplingBetweenClasses());
         modules.add(new WeightedMethodsPerClass());
@@ -63,5 +64,31 @@ public class Util {
             e.printStackTrace();
         }
 
+    }
+
+
+    public void fileFindAndReplace(String filePath, String find, String jsonResults) throws FileNotFoundException {
+        try {
+            // Read the content of the file
+            BufferedReader reader = new BufferedReader(new FileReader(filePath));
+            StringBuilder contentBuilder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                contentBuilder.append(line).append("\n");
+            }
+            reader.close();
+            String content = contentBuilder.toString();
+
+            // Perform find and replace operation
+            content = content.replaceAll(find, jsonResults);
+
+            // Write modified content back to the file
+            BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
+            writer.write(content);
+            writer.close();
+
+        } catch (IOException e) {
+            System.err.println("Error: " + e.getMessage());
+        }
     }
 }
