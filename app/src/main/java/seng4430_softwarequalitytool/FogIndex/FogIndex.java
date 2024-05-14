@@ -27,7 +27,7 @@ import java.util.Properties;
 public class FogIndex implements Module {
 
     private List<CompilationUnit> CompilationUnits;
-    private int wordCount = 0;
+
     private int commentCount = 0;
     private int commentSentences = 0;
     private int commentComplexWords = 0;
@@ -64,7 +64,7 @@ public class FogIndex implements Module {
         try{
             printModuleHeader();
 
-            this.wordCount = computeFogIndex(compilationUnits);
+            computeFogIndex(compilationUnits);
             int commentRange = calculateFogIndex(commentCount, commentSentences, commentComplexWords);
             String commentEval = evaluateRange(commentRange);
 
@@ -96,7 +96,7 @@ public class FogIndex implements Module {
         return (int) Math.round(0.4 * ((wordCount / sentenceCount) + 100 * (complexWordCount / wordCount)));
     }
 
-    public  int computeFogIndex(List<CompilationUnit> compilationUnits) {
+    public  int[] computeFogIndex(List<CompilationUnit> compilationUnits) {
 
         for (CompilationUnit cu : compilationUnits) {
             java.util.List<Comment> comments = cu.getAllComments();
@@ -111,7 +111,7 @@ public class FogIndex implements Module {
             codeComplexWords += syllableCounter.countWordsWithThreeOrMoreSyllables(cu.toString());
 
         }
-        return wordCount;
+        return new int[]{commentComplexWords, commentCount, commentSentences, codeComplexWords, codeCount, codeSentences};
     }
 
     public static int countWords(String str, boolean code) {
@@ -136,9 +136,7 @@ public class FogIndex implements Module {
         if (str != null) {
             String[] sentences = str.split("\n|\\;");
             sentences = Arrays.stream(sentences).filter(sentence -> !sentence.isEmpty()).toArray(String[]::new);
-            for (String sentence : sentences) {
-                System.out.println(sentence);
-            }
+
             tempSentencesCount += sentences.length;
         }
 
@@ -165,7 +163,6 @@ public class FogIndex implements Module {
     public void printModuleHeader() {
         System.out.println("\n");
         System.out.println("---- Fog Index Module ----");
-        System.out.format("%25s %s", "Function Name", "Fog Index\n");
     }
 
     @Override

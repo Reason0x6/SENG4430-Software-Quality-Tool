@@ -141,7 +141,6 @@ public class CyclomaticComplexity implements Module {
                     });
 
             complexityModel.put(className, methodComplexity);
-            System.out.println("Complexity for: " + className + "(): " + partialComplexity.get());
         }
         return totalComplexity.get();
     }
