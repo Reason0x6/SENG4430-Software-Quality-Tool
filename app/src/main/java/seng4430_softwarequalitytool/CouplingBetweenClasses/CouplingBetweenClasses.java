@@ -123,7 +123,7 @@ public class CouplingBetweenClasses implements Module {
                 html.append("<td>" + b.parameterDictionary.getOrDefault(a.name,0) + "</td>");
                 html.append("<td>" + b.memberDictionary.getOrDefault(a.name,0) + "</td>");
                 html.append("</tr>");
-                if (bUsingA > 4) {
+                if (bUsingA > 4 && bUsingA < 9) {
                     issueFound = true;
                     comments.append("<tr bgcolor=\"#ECD55E\">");
                     comments.append("<td><span style=\"font-weight:bold;\">" + b.name + "</span> - uses - <span style=\"font-weight:bold;\">" + a.name + "</span></td>");
@@ -136,10 +136,36 @@ public class CouplingBetweenClasses implements Module {
                     comments.append("<td>" + a.parameterDictionary.getOrDefault(b.name,0) + "</td>");
                     comments.append("<td>" + a.memberDictionary.getOrDefault(b.name,0) + "</td>");
                     comments.append("</tr>");
+                } else if (bUsingA > 8) {
+                    issueFound = true;
+                    comments.append("<tr bgcolor=\"#F29461\">");
+                    comments.append("<td><span style=\"font-weight:bold;\">" + b.name + "</span> - uses - <span style=\"font-weight:bold;\">" + a.name + "</span></td>");
+                    comments.append("<td>" +
+                            (a.returnTypeDictionary.getOrDefault(b.name,0)
+                                    + a.parameterDictionary.getOrDefault(b.name,0)
+                                    + a.memberDictionary.getOrDefault(b.name,0))
+                            + "</td>");
+                    comments.append("<td>" + a.returnTypeDictionary.getOrDefault(b.name,0) + "</td>");
+                    comments.append("<td>" + a.parameterDictionary.getOrDefault(b.name,0) + "</td>");
+                    comments.append("<td>" + a.memberDictionary.getOrDefault(b.name,0) + "</td>");
+                    comments.append("</tr>");
                 }
-                if (aUsingB > 4) {
+                if (aUsingB > 4 && aUsingB < 9) {
                     issueFound = true;
                     comments.append("<tr bgcolor=\"#ECD55E\">");
+                    comments.append("<td><span style=\"font-weight:bold;\">" + a.name + "</span> - uses - <span style=\"font-weight:bold;\">" + b.name + "</span></td>");
+                    comments.append("<td>" +
+                            (b.returnTypeDictionary.getOrDefault(a.name,0)
+                                    + b.parameterDictionary.getOrDefault(a.name,0)
+                                    + b.memberDictionary.getOrDefault(a.name,0))
+                            + "</td>");
+                    comments.append("<td>" + b.returnTypeDictionary.getOrDefault(a.name,0) + "</td>");
+                    comments.append("<td>" + b.parameterDictionary.getOrDefault(a.name,0) + "</td>");
+                    comments.append("<td>" + b.memberDictionary.getOrDefault(a.name,0) + "</td>");
+                    comments.append("</tr>");
+                } else if (aUsingB > 8) {
+                    issueFound = true;
+                    comments.append("<tr bgcolor=\"#F29461\">");
                     comments.append("<td><span style=\"font-weight:bold;\">" + a.name + "</span> - uses - <span style=\"font-weight:bold;\">" + b.name + "</span></td>");
                     comments.append("<td>" +
                             (b.returnTypeDictionary.getOrDefault(a.name,0)
