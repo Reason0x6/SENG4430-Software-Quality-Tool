@@ -9,11 +9,17 @@ import java.io.LineNumberReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.Arrays;
+
+import com.google.common.io.Files;
+
+import java.io.IOException;
 
 public class DirectoryScanner {
     private Path root;
     private List<File> files;
     private int currentFileIdx;
+    private static List<String> compatibleExtensions = Arrays.asList("java", "properties", "json");
 
     private LineNumberReader lr;
 
@@ -41,7 +47,10 @@ public class DirectoryScanner {
      */
     private void scanForFiles(File file, List<File> files) {
         if (file.isFile()) {
-            files.add(file);
+            String fileExt = Files.getFileExtension(file.getName());
+            if (compatibleExtensions.contains(fileExt)) {
+                files.add(file);
+            }
             return;
         }
 
@@ -52,9 +61,14 @@ public class DirectoryScanner {
 
     public String nextLine() throws IOException {
         String next;
-        if ((next = lr.readLine()) != null) {
-            return next;
+        try {
+            if ((next = lr.readLine()) != null) {
+                return next;
+            }
+        } catch (IOException e) {
+            // skip current file
         }
+
         // EOF for current file, look for next file
         lr = getNextReader().orElse(null);
 
@@ -69,6 +83,7 @@ public class DirectoryScanner {
     private Optional<LineNumberReader> getNextReader() throws IOException {
         lr.close();
         currentFileIdx++;
+        
         if (currentFileIdx >= files.size()) {
             return Optional.empty();
         }

@@ -33,7 +33,15 @@ public class HTMLTableBuilder {
                             " items. Number of items passed: " + items.length);
         }
 
-        rows.add(Arrays.asList(items));
+        List<String> sanitisedItems = new ArrayList<>();
+
+        // sanitise items (make them compatible for html)
+        for (String item : items) {
+            String sanitisedItem = item.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+            sanitisedItems.add(sanitisedItem);
+        }
+
+        rows.add(sanitisedItems);
     }
 
     @Override
@@ -41,8 +49,9 @@ public class HTMLTableBuilder {
         StringBuilder builder = new StringBuilder();
 
         // Add table name
-        builder.append(String.format("<b>%s</b>", name));
-        builder.append("<hr>");
+        if (!name.isEmpty()) {
+            builder.append(String.format("<p><b>%s</b></p>", name));
+        }
 
         // Add table header
         builder.append("<table class=\"table\">");
