@@ -92,5 +92,16 @@ class FogIndexTest {
         assertEquals(0, count);
     }
 
+    @Test
+    public void countWordsWithThreeOrMoreSyllables_returnsCorrectCountForSingleWord() {
+        // Given
+        String sentence = "syllables";
+
+        // When
+        int count = SyllableCounter.countWordsWithThreeOrMoreSyllables(sentence);
+
+        // Then
+        assertEquals(1, count);
+    }
 }
 
