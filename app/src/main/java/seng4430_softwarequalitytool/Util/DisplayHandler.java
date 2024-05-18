@@ -1,10 +1,7 @@
 package seng4430_softwarequalitytool.Util;
 
 import com.formdev.flatlaf.FlatDarkLaf;
-import com.formdev.flatlaf.FlatLightLaf;
-import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.utils.Log;
-import com.github.javaparser.utils.SourceRoot;
 import seng4430_softwarequalitytool.App;
 
 import javax.swing.*;
@@ -16,8 +13,6 @@ import java.awt.event.ComponentEvent;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
 
 public class DisplayHandler {
     static public String selectedDirectory = "C:\\";
@@ -31,7 +26,7 @@ public class DisplayHandler {
         }
     }
 
-    public  void createDisplay() {
+    public  void createDisplay(Path folderPath) {
         FlatDarkLaf.setup();
 
         JFrame frame = new JFrame();
@@ -124,7 +119,9 @@ public class DisplayHandler {
             public void actionPerformed(ActionEvent e) {
                 //run the main application function here passing in the string
                 Log.setAdapter(new Log.StandardOutStandardErrorAdapter());
-                File report = App.createFile();
+                File report = App.createFile(folderPath.toString());
+                String dataFolder = System.getProperty("user.home") + "\\Local Settings\\ApplicationData";
+                System.out.println(dataFolder);
                 String reportFilePath = report.getAbsolutePath();
                 try{
                     App.introspectiveTest(reportFilePath);
@@ -145,7 +142,7 @@ public class DisplayHandler {
             public void actionPerformed(ActionEvent e) {
                 //run the main application function here passing in the string
                 Log.setAdapter(new Log.StandardOutStandardErrorAdapter());
-                File report = App.createFile();
+                File report = App.createFile(folderPath.toString());
                 String reportFilePath = report.getAbsolutePath();
                 try{
                     App.exampleTest(reportFilePath);
@@ -165,7 +162,7 @@ public class DisplayHandler {
             public void actionPerformed(ActionEvent e) {
                 //run the main application function here passing in the string
                 Log.setAdapter(new Log.StandardOutStandardErrorAdapter());
-                File report = App.createFile();
+                File report = App.createFile(folderPath.toString());
                 String reportFilePath = report.getAbsolutePath();
                 try{
                     App.generalTest(reportFilePath, selectedDirectory);
