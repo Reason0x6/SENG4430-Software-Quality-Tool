@@ -1,11 +1,11 @@
 package seng4430_softwarequalitytool;
 
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.comments.LineComment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import seng4430_softwarequalitytool.FogIndex.FogIndex;
+import seng4430_softwarequalitytool.FogIndex.SyllableCounter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +13,10 @@ import java.util.List;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * This class contains unit tests for the FogIndex class.
+ * It tests the functionality of the FogIndex class, including the calculation of the Fog Index and the counting of words and sentences.
+ */
 class FogIndexTest {
     private FogIndex fogIndex;
 
@@ -61,6 +65,31 @@ class FogIndexTest {
     @Test
     void testEvaluateRange() {
         assertEquals("Senior High School", fogIndex.evaluateRange(10));
+    }
+
+
+    @Test
+    public void countWordsWithThreeOrMoreSyllables_returnsZeroForEmptyString() {
+        // Given
+        String sentence = "";
+
+        // When
+        int count = SyllableCounter.countWordsWithThreeOrMoreSyllables(sentence);
+
+        // Then
+        assertEquals(0, count);
+    }
+
+    @Test
+    public void countWordsWithThreeOrMoreSyllables_returnsZeroForStringWithNoWordsOfThreeOrMoreSyllables() {
+        // Given
+        String sentence = "This is a test.";
+
+        // When
+        int count = SyllableCounter.countWordsWithThreeOrMoreSyllables(sentence);
+
+        // Then
+        assertEquals(0, count);
     }
 
 }
