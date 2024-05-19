@@ -1,23 +1,36 @@
 package seng4430_softwarequalitytool.Util;
 
+import java.io.*;
 import java.util.List;
 import java.util.ArrayList;
 import java.nio.file.Path;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.LineNumberReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.Optional;
+import java.util.Properties;
+
+import org.apache.commons.io.FilenameUtils;
 
 public class DirectoryScanner {
     private Path root;
     private List<File> files;
     private int currentFileIdx;
-
     private LineNumberReader lr;
+    private Properties properties;
+    private List<String> ignoreTypes;
+
+
 
     public DirectoryScanner(Path root) throws FileNotFoundException {
+
+        this.properties = new Properties();
+        try {
+            properties
+                    .load(new FileInputStream("src/main/resources/DefaultDefinitions/credentials_in_code.properties"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        this.ignoreTypes = List.of(properties.getProperty("ignore_file_types").split(","));
+
         this.root = root;
 
         // Get list of files from the root of the project
@@ -41,6 +54,13 @@ public class DirectoryScanner {
      */
     private void scanForFiles(File file, List<File> files) {
         if (file.isFile()) {
+
+            String ext1 = FilenameUtils.getExtension(file.getAbsolutePath());
+
+            if (ignoreTypes.contains(ext1)) {
+                return;
+            }
+
             files.add(file);
             return;
         }
