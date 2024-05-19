@@ -117,7 +117,21 @@ public class App {
     public static void generalTest(String reportFilePath, String sourceDirectory) throws IOException {
 
         Path pathToSource = Paths.get(sourceDirectory);
+
+        // Set up type solver
+        CombinedTypeSolver combinedTypeSolver = new CombinedTypeSolver();
+        // Type solver for java modules
+        combinedTypeSolver.add(new ReflectionTypeSolver());
+        // Type solver for source project
+        List<File> folders = new ArrayList<>();
+        scanForFolders(pathToSource.toFile(), folders);
+        for (File folder : folders) {
+            combinedTypeSolver.add(new JavaParserTypeSolver(folder));
+        }
+        JavaSymbolSolver symbolSolver = new JavaSymbolSolver(combinedTypeSolver);
+
         SourceRoot sourceRoot = new SourceRoot(pathToSource);
+        sourceRoot.getParserConfiguration().setSymbolResolver(symbolSolver); // Configure parser to use type resolution
         sourceRoot.tryToParse();
         List<CompilationUnit> compilations = sourceRoot.getCompilationUnits();
 

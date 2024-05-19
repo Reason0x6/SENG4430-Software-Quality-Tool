@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Arrays;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.NodeList;
@@ -50,6 +51,9 @@ public class FanInFanOut implements Module {
     private Map<String, List<String>> methodMap;
     private Map<String, Integer> fanIns;
     private Map<String, Integer> fanOuts;
+    private Map<String, Integer> fanInsWarning;
+    private Map<String, Integer> fanOutsWarning;
+    private Map<String, List<Integer>> fanInFanOutWarning;
 
     public FanInFanOut() {
         properties = new Properties();
@@ -62,6 +66,9 @@ public class FanInFanOut implements Module {
         this.methodMap = new HashMap<>();
         this.fanIns = new HashMap<>();
         this.fanOuts = new HashMap<>();
+        this.fanInsWarning = new HashMap<>();
+        this.fanOutsWarning = new HashMap<>();
+        this.fanInFanOutWarning = new HashMap<>();
     }
 
     @Override
@@ -69,6 +76,7 @@ public class FanInFanOut implements Module {
         try {
             // Calculate
             calculateFanInFanOut(compilationUnits);
+            evaluate();
 
             // Print report
             printModuleHeader();
@@ -108,6 +116,8 @@ public class FanInFanOut implements Module {
     public void saveResult() {
         System.out.println("Fan-in average: " + calculateAverage(fanIns.values()) +
                 "\nFan-out average: " + calculateAverage(fanOuts.values()));
+        System.out.println("Number of methods with high fan-in: " + fanInsWarning.size());
+        System.out.println("Number of methods with high fan-out: " + fanOutsWarning.size());
     }
 
     private void printToFile(String reportFilePath) {
@@ -124,13 +134,67 @@ public class FanInFanOut implements Module {
             reader.close();
             String content = contentBuilder.toString();
 
-            // Perform find and replace operation
-            HTMLTableBuilder tableBuilder = new HTMLTableBuilder("Fan-in & Fan-out", "Function Name", "Fan-in",
+            // Build output to display
+            StringBuilder sb = new StringBuilder();
+            HTMLTableBuilder tableBuilder;
+
+            // Evaluations - Fan-in
+            sb.append("<h3>Fan-in</h3>");
+            tableBuilder = new HTMLTableBuilder("", "Method Name", "Fan-in");
+            for (String key : fanInsWarning.keySet()) {
+                tableBuilder.addRow(key, fanInsWarning.get(key).toString());
+            }
+            if (!tableBuilder.isEmpty()) {
+                sb.append(String.format("<p><b>%s methods has fan-in value higher than %s.</b></p>", fanInsWarning.size(), properties.getProperty("max_fanin_value")));
+                sb.append("<p>A high fan-in value means that many other modules depend on the module in question, making it harder to change or refactor without potentially causing ripple effects throughout the codebase.</p>");    
+                sb.append(tableBuilder.toString());
+            } else {
+                sb.append(String.format("<p><b>No methods with fan-in value higher than %s were found.</b></p>", properties.getProperty("max_fanin_value")));
+                sb.append("<p>A high fan-in value means that many other modules depend on the module in question, making it harder to change or refactor without potentially causing ripple effects throughout the codebase.</p>");
+            }
+            
+            // Evaluations - Fan-out
+            sb.append("<h3>Fan-out</h3>");
+            tableBuilder = new HTMLTableBuilder("", "Method Name", "Fan-out");
+            for (String key : fanOutsWarning.keySet()) {
+                tableBuilder.addRow(key, fanOutsWarning.get(key).toString());
+            }
+            if (!tableBuilder.isEmpty()) {
+                sb.append(String.format("<p><b>%s methods has fan-out value higher than %s.</b></p>", fanOutsWarning.size(), properties.getProperty("max_fanout_value")));
+                sb.append("<p>A high fan-out value means that the module in question depends on many other modules, potentially making it more difficult to understand, maintain, and test.</p>");
+                sb.append(tableBuilder.toString());
+            } else {
+                sb.append(String.format("<p><b>No methods with fan-out value higher than %s were found.</b></p>", properties.getProperty("max_fanout_value")));
+                sb.append("<p>A high fan-out value means that the module in question depends on many other modules, potentially making it more difficult to understand, maintain, and test.</p>");
+            }
+
+            // Evaluations - High Fan-in & Fan-out
+            sb.append("<h3>High Fan-in & Fan-out</h3>");
+            tableBuilder = new HTMLTableBuilder("", "Method Name", "Fan-in", "Fan-out");
+            for (String key : fanInFanOutWarning.keySet()) {
+                List<Integer> values = fanInFanOutWarning.get(key);
+                tableBuilder.addRow(key, values.get(0).toString(), values.get(1).toString());
+            }
+            if (!tableBuilder.isEmpty()) {
+                sb.append(String.format("<p><b>%s methods has both fan-in and fan-out value higher than their threshold.</b></p>", fanOutsWarning.size()));
+                sb.append("<p>A high fan-in and fan-out value lead to significant maintainability issues in the codebase, as it is prone to errors whenever one of its dependencies changes, and the errors will propagate to many other parts of the codebase that rely on it.</p>");
+                sb.append(tableBuilder.toString());
+            } else {
+                sb.append("<p><b>No method has a high value for both fan-in and fan-out.</b></p>");
+                sb.append("<p>A high fan-in and fan-out value lead to significant maintainability issues in the codebase, as it is prone to errors whenever one of its dependencies changes, and the errors will propagate to many other parts of the codebase that rely on it.</p>");
+            }
+            
+            // Table
+            sb.append("<h3>All Methods</h3>");
+            tableBuilder = new HTMLTableBuilder("", "Method Name", "Fan-in",
                     "Fan-out");
             for (String key : fanIns.keySet()) {
                 tableBuilder.addRow(key, fanIns.get(key).toString(), fanOuts.get(key).toString());
             }
-            content = content.replaceAll(find, tableBuilder.toString());
+            sb.append(tableBuilder.toString());
+
+            // Perform find and replace operation
+            content = content.replaceAll(find, sb.toString());
 
             // Write modified content back to the file
             BufferedWriter writer = new BufferedWriter(new FileWriter(reportFilePath));
@@ -155,7 +219,25 @@ public class FanInFanOut implements Module {
     }
 
     private void evaluate() {
+        // check if there are methods that exceed max fan-in threshold
+        for (String key : fanIns.keySet()) {
+            boolean fanInWarning = false;
+            boolean fanOutWarning = false;
 
+            if (fanIns.get(key) > Integer.parseInt(properties.getProperty("max_fanin_value"))) {
+                fanInsWarning.put(key, fanIns.get(key));
+                fanInWarning = true;
+            }
+
+            if (fanOuts.get(key) > Integer.parseInt(properties.getProperty("max_fanout_value"))) {
+                fanOutsWarning.put(key, fanOuts.get(key));
+                fanOutWarning = true;
+            }
+
+            if (fanInWarning && fanOutWarning) {
+                fanInFanOutWarning.put(key, Arrays.asList(fanIns.get(key), fanOuts.get(key)));
+            }
+        }
     }
 
     private void calculateFanInFanOut(List<CompilationUnit> compilationUnits) {
@@ -250,14 +332,14 @@ public class FanInFanOut implements Module {
         if (!packageName.isEmpty()) {
             fullyQualifiedName.append(packageName).append(".");
         }
-        
+
         // Add the class/interface/enum name
         String typeName = td.getNameAsString();
         fullyQualifiedName.append(typeName).append(".");
-        
+
         // Add method name
         fullyQualifiedName.append(md.getNameAsString());
-        
+
         return fullyQualifiedName.toString();
     }
 
@@ -276,6 +358,9 @@ public class FanInFanOut implements Module {
                     qualifiedName = resolvedScope != "" ? resolvedScope + "." + methodName : methodName;
                 } catch (UnsolvedSymbolException e) {
                     // Do nothing...
+                } catch (IllegalArgumentException e) {
+                    // If symbol solver cannot detect type declaration, e.g. Record
+                    // Do nothing...
                 }
             } else {
                 // If scope is not found, try to resolve the method directly
@@ -286,8 +371,9 @@ public class FanInFanOut implements Module {
                     // Do nothing...
                 }
             }
-
-            collector.add(qualifiedName);
+            if (!qualifiedName.isEmpty()) {
+                collector.add(qualifiedName);
+            }
             super.visit(methodCallExpr, collector);
         }
     }

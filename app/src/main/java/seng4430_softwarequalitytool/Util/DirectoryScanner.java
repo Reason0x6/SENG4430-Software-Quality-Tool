@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.Properties;
-
 import org.apache.commons.io.FilenameUtils;
+
 
 public class DirectoryScanner {
     private Path root;
@@ -55,6 +55,7 @@ public class DirectoryScanner {
     private void scanForFiles(File file, List<File> files) {
         if (file.isFile()) {
 
+
             String ext1 = FilenameUtils.getExtension(file.getAbsolutePath());
 
             if (ignoreTypes.contains(ext1)) {
@@ -62,6 +63,7 @@ public class DirectoryScanner {
             }
 
             files.add(file);
+
             return;
         }
 
@@ -72,9 +74,14 @@ public class DirectoryScanner {
 
     public String nextLine() throws IOException {
         String next;
-        if ((next = lr.readLine()) != null) {
-            return next;
+        try {
+            if ((next = lr.readLine()) != null) {
+                return next;
+            }
+        } catch (IOException e) {
+            // skip current file
         }
+
         // EOF for current file, look for next file
         lr = getNextReader().orElse(null);
 
@@ -89,6 +96,7 @@ public class DirectoryScanner {
     private Optional<LineNumberReader> getNextReader() throws IOException {
         lr.close();
         currentFileIdx++;
+        
         if (currentFileIdx >= files.size()) {
             return Optional.empty();
         }
