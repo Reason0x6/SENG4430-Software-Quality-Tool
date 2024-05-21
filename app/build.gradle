@@ -17,6 +17,9 @@ repositories {
 
 test {
     useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
 }
 
 dependencies {
@@ -46,6 +49,8 @@ java {
         languageVersion = JavaLanguageVersion.of(21)
     }
 }
+
+
 
 sourceSets {
     main {
