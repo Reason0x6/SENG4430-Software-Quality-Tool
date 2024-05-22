@@ -41,11 +41,7 @@ public class WeightedMethodsPerClass  implements Module {
     @Override
     public String compute(List<CompilationUnit> compilationUnits, String filePath) {
         //build out models of classes and methods
-
         getClassData(compilationUnits, classes);
-
-        String result = "\n***********************\n" + toString() + "***********************\n";
-        System.out.println(result);
 
         try{
             printModuleHeader();
