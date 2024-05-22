@@ -12,14 +12,14 @@ import java.util.List;
 import static seng4430_softwarequalitytool.Util.ClassModel.getClassData;
 
 /**
- * Fenton and Melton metric C(a,b) = i + n/(n+1)
  * where:
  * 'I' is the coupling index between module / classes
- * a and b, n is the number of dependencies and i is a score
- * of the tightest dependency from 0 to 5 (0 = lowest tightness).
+ * I = 1 - 1/(1+R+P+M)
+ * R = return type usage
+ * P = parameter usage
+ * M = member usage
+ * dependence / coupling from 0 to 1 (0 = lowest level of coupling).
  *
- * currently only n is considered, that is C(a,b) = n/(n+1)
- * i to be added to later
  */
 public class CouplingBetweenClasses implements Module {
     private List<ClassModel> classes = new ArrayList<>();
