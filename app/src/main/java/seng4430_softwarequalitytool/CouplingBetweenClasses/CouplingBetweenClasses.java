@@ -14,12 +14,12 @@ import static seng4430_softwarequalitytool.Util.ClassModel.getClassData;
 /**
  * Fenton and Melton metric C(a,b) = i + n/(n+1)
  * where:
- * C(a,b) is the coupling index between module / classes
+ * 'I' is the coupling index between module / classes
  * a and b, n is the number of dependencies and i is a score
  * of the tightest dependency from 0 to 5 (0 = lowest tightness).
  *
  * currently only n is considered, that is C(a,b) = n/(n+1)
- * to be added to later
+ * i to be added to later
  */
 public class CouplingBetweenClasses implements Module {
     private List<ClassModel> classes = new ArrayList<>();
@@ -38,8 +38,6 @@ public class CouplingBetweenClasses implements Module {
             c.findDependencies(compilationUnits, classNames);
         }
 
-        String result = "\n***********************\n" + toString() + "\n***********************\n";
-        System.out.println(result);
         try{
             printModuleHeader();
             printInformation();
@@ -80,7 +78,7 @@ public class CouplingBetweenClasses implements Module {
 
     @Override
     public void printInformation() {
-        html.append("<button class=\"btn btn-light\" onclick=\"toggleViewById(\'CBC\')\">Toggle greater detail</button>");
+        html.append("<button class=\"btn btn-light\" onclick=\"toggleViewById('CBC')\">Toggle greater detail</button>");
         html.append("<table class=\"table\" id=\"CBC\" style=\"display:none;\">");
         html.append("<thead class=\"thead-light\"><tr><th scope=\"col\">Class relationship</th>" +
                 "<th scope=\"col\">Total usage</th><th scope=\"col\">Return type usage</th>" +
@@ -88,25 +86,31 @@ public class CouplingBetweenClasses implements Module {
         html.append("<tbody>");
         StringBuilder comments = new StringBuilder();
         comments.append("<table class=\"table\">");
-        comments.append("<thead class=\"thead-light\"><tr><th scope=\"col\">Comments</th></tr></thead>");
+        comments.append("<thead class=\"thead-light\"><tr>" +
+                "<th scope=\"col\">Comments on Usage</th>" +
+                "<th scope=\"col\">Index</th>" +
+                "<th scope=\"col\">Return Type</th>" +
+                "<th scope=\"col\">Parameter</th>" +
+                "<th scope=\"col\">Member</th>" +
+                "</tr></thead>");
         comments.append("<tbody>");
         boolean issueFound = false;
         for (int i = 0; i < classes.size(); i++) {
             for (int j = i + 1; j < classes.size(); j++) {
                 ClassModel a = classes.get(i);
                 ClassModel b = classes.get(j);
-                int bUsingA = a.returnTypeDictionary.getOrDefault(b.name,0)
-                        + a.parameterDictionary.getOrDefault(b.name,0)
-                        + a.memberDictionary.getOrDefault(b.name,0);
-                int aUsingB = b.returnTypeDictionary.getOrDefault(a.name,0)
-                        + b.parameterDictionary.getOrDefault(a.name,0)
-                        + b.memberDictionary.getOrDefault(a.name,0);
+                double bUsingAIndex = couplingIndex(a.returnTypeDictionary.getOrDefault(b.name,0),
+                        a.parameterDictionary.getOrDefault(b.name,0),
+                        a.memberDictionary.getOrDefault(b.name,0));
+                double aUsingBIndex = couplingIndex(b.returnTypeDictionary.getOrDefault(a.name,0),
+                        b.parameterDictionary.getOrDefault(a.name,0),
+                        b.memberDictionary.getOrDefault(a.name,0));
                 html.append("<tr>");
                 html.append("<td><span style=\"font-weight:bold;\">" + b.name + "</span> - uses - <span style=\"font-weight:bold;\">" + a.name + "</span></td>");
                 html.append("<td>" +
-                        (a.returnTypeDictionary.getOrDefault(b.name,0)
-                                + a.parameterDictionary.getOrDefault(b.name,0)
-                                + a.memberDictionary.getOrDefault(b.name,0))
+                        couplingIndexString(a.returnTypeDictionary.getOrDefault(b.name,0),
+                                 a.parameterDictionary.getOrDefault(b.name,0),
+                                 a.memberDictionary.getOrDefault(b.name,0))
                         + "</td>");
                 html.append("<td>" + a.returnTypeDictionary.getOrDefault(b.name,0) + "</td>");
                 html.append("<td>" + a.parameterDictionary.getOrDefault(b.name,0) + "</td>");
@@ -115,62 +119,62 @@ public class CouplingBetweenClasses implements Module {
                 html.append("<tr>");
                 html.append("<td><span style=\"font-weight:bold;\">" + a.name + "</span> - uses - <span style=\"font-weight:bold;\">" + b.name + "</span></td>");
                 html.append("<td>" +
-                        (b.returnTypeDictionary.getOrDefault(a.name,0)
-                                + b.parameterDictionary.getOrDefault(a.name,0)
-                                + b.memberDictionary.getOrDefault(a.name,0))
+                        couplingIndexString(b.returnTypeDictionary.getOrDefault(a.name,0),
+                                b.parameterDictionary.getOrDefault(a.name,0),
+                                b.memberDictionary.getOrDefault(a.name,0))
                         + "</td>");
                 html.append("<td>" + b.returnTypeDictionary.getOrDefault(a.name,0) + "</td>");
                 html.append("<td>" + b.parameterDictionary.getOrDefault(a.name,0) + "</td>");
                 html.append("<td>" + b.memberDictionary.getOrDefault(a.name,0) + "</td>");
                 html.append("</tr>");
-                if (bUsingA > 4 && bUsingA < 9) {
+                if (bUsingAIndex >= 0.8 && bUsingAIndex < 0.9) {
                     issueFound = true;
                     comments.append("<tr bgcolor=\"#ECD55E\">");
                     comments.append("<td><span style=\"font-weight:bold;\">" + b.name + "</span> - uses - <span style=\"font-weight:bold;\">" + a.name + "</span></td>");
                     comments.append("<td>" +
-                            (a.returnTypeDictionary.getOrDefault(b.name,0)
-                            + a.parameterDictionary.getOrDefault(b.name,0)
-                            + a.memberDictionary.getOrDefault(b.name,0))
+                            couplingIndexString(a.returnTypeDictionary.getOrDefault(b.name,0),
+                            a.parameterDictionary.getOrDefault(b.name,0),
+                            a.memberDictionary.getOrDefault(b.name,0))
                             + "</td>");
                     comments.append("<td>" + a.returnTypeDictionary.getOrDefault(b.name,0) + "</td>");
                     comments.append("<td>" + a.parameterDictionary.getOrDefault(b.name,0) + "</td>");
                     comments.append("<td>" + a.memberDictionary.getOrDefault(b.name,0) + "</td>");
                     comments.append("</tr>");
-                } else if (bUsingA > 8) {
+                } else if (bUsingAIndex >= 0.9) {
                     issueFound = true;
                     comments.append("<tr bgcolor=\"#F29461\">");
                     comments.append("<td><span style=\"font-weight:bold;\">" + b.name + "</span> - uses - <span style=\"font-weight:bold;\">" + a.name + "</span></td>");
                     comments.append("<td>" +
-                            (a.returnTypeDictionary.getOrDefault(b.name,0)
-                                    + a.parameterDictionary.getOrDefault(b.name,0)
-                                    + a.memberDictionary.getOrDefault(b.name,0))
+                            couplingIndexString(a.returnTypeDictionary.getOrDefault(b.name,0),
+                                    a.parameterDictionary.getOrDefault(b.name,0),
+                                    a.memberDictionary.getOrDefault(b.name,0))
                             + "</td>");
                     comments.append("<td>" + a.returnTypeDictionary.getOrDefault(b.name,0) + "</td>");
                     comments.append("<td>" + a.parameterDictionary.getOrDefault(b.name,0) + "</td>");
                     comments.append("<td>" + a.memberDictionary.getOrDefault(b.name,0) + "</td>");
                     comments.append("</tr>");
                 }
-                if (aUsingB > 4 && aUsingB < 9) {
+                if (aUsingBIndex >= 0.8 && aUsingBIndex < 0.9) {
                     issueFound = true;
                     comments.append("<tr bgcolor=\"#ECD55E\">");
                     comments.append("<td><span style=\"font-weight:bold;\">" + a.name + "</span> - uses - <span style=\"font-weight:bold;\">" + b.name + "</span></td>");
                     comments.append("<td>" +
-                            (b.returnTypeDictionary.getOrDefault(a.name,0)
-                                    + b.parameterDictionary.getOrDefault(a.name,0)
-                                    + b.memberDictionary.getOrDefault(a.name,0))
+                            couplingIndexString(b.returnTypeDictionary.getOrDefault(a.name,0),
+                                    b.parameterDictionary.getOrDefault(a.name,0),
+                                    b.memberDictionary.getOrDefault(a.name,0))
                             + "</td>");
                     comments.append("<td>" + b.returnTypeDictionary.getOrDefault(a.name,0) + "</td>");
                     comments.append("<td>" + b.parameterDictionary.getOrDefault(a.name,0) + "</td>");
                     comments.append("<td>" + b.memberDictionary.getOrDefault(a.name,0) + "</td>");
                     comments.append("</tr>");
-                } else if (aUsingB > 8) {
+                } else if (aUsingBIndex >= 0.9) {
                     issueFound = true;
                     comments.append("<tr bgcolor=\"#F29461\">");
                     comments.append("<td><span style=\"font-weight:bold;\">" + a.name + "</span> - uses - <span style=\"font-weight:bold;\">" + b.name + "</span></td>");
                     comments.append("<td>" +
-                            (b.returnTypeDictionary.getOrDefault(a.name,0)
-                                    + b.parameterDictionary.getOrDefault(a.name,0)
-                                    + b.memberDictionary.getOrDefault(a.name,0))
+                            couplingIndexString(b.returnTypeDictionary.getOrDefault(a.name,0),
+                                    b.parameterDictionary.getOrDefault(a.name,0),
+                                    b.memberDictionary.getOrDefault(a.name,0))
                             + "</td>");
                     comments.append("<td>" + b.returnTypeDictionary.getOrDefault(a.name,0) + "</td>");
                     comments.append("<td>" + b.parameterDictionary.getOrDefault(a.name,0) + "</td>");
@@ -193,6 +197,15 @@ public class CouplingBetweenClasses implements Module {
             html.append("</tbody>");
             html.append("</table>");
         }
+    }
+
+    private String couplingIndexString(int returnUsage, int parameterUsage, int memberUsage) {
+        double result = 1 - (1 / (double)(1 + returnUsage + parameterUsage + memberUsage));
+        return String.format("%.2f",result);
+    }
+    private double couplingIndex(int returnUsage, int parameterUsage, int memberUsage) {
+        return 1 - (1 / (double)(1 + returnUsage + parameterUsage + memberUsage));
+
     }
 
     @Override
