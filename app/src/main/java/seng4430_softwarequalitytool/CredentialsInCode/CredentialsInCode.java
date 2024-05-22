@@ -13,6 +13,8 @@ import java.util.Optional;
 
 import java.util.Properties;
 
+import java.util.regex.Matcher;
+
 import seng4430_softwarequalitytool.Util.DSModule;
 import seng4430_softwarequalitytool.Util.DirectoryScanner;
 import seng4430_softwarequalitytool.Util.HTMLTableBuilder;
@@ -115,19 +117,37 @@ public class CredentialsInCode implements DSModule {
             reader.close();
             String content = contentBuilder.toString();
 
-            // Build html table
-            HTMLTableBuilder tableBuilder = new HTMLTableBuilder("Fan-in & Fan-out", 
-            "File name", "line", "token", "Entropy Ratio");
+            // Build html tables, one for each file
+            StringBuilder out = new StringBuilder();
+            String currentFileName = credentials.get(0).fileName();
+            HTMLTableBuilder tableBuilder = new HTMLTableBuilder(
+                    "File: " + currentFileName,
+                    "line", 
+                    "token",
+                    "Entropy Ratio");
+
             for (Credential credential : credentials) {
+                if (currentFileName != credential.fileName()) {
+                    // append current table to output
+                    out.append(tableBuilder.toString());
+                    // move on to next file
+                    currentFileName = credential.fileName();
+                    tableBuilder = new HTMLTableBuilder(
+                            "File: " + currentFileName, 
+                            "line", 
+                            "token", 
+                            "Entropy Ratio");
+                }
                 tableBuilder.addRow(
-                    credential.fileName(), 
-                    "line " + credential.lineNum(), 
-                    credential.token(), 
-                    String.format("%.2f", credential.entropyRatio()));
+                        "line " + credential.lineNum(),
+                        credential.token(),
+                        String.format("%.2f", credential.entropyRatio()));
             }
 
+            out.append(tableBuilder.toString());
+
             // Perform find and replace operation
-            content = content.replaceAll(find, tableBuilder.toString());
+            content = content.replaceAll(find, Matcher.quoteReplacement(out.toString()));
 
             // Write modified content back to the file
             BufferedWriter writer = new BufferedWriter(new FileWriter(reportFilePath));
@@ -159,6 +179,12 @@ public class CredentialsInCode implements DSModule {
      * @return
      */
     public double calculateEntropy(String token) {
+
+        if (token.length() > Integer.parseInt(properties.getProperty("max_token_length")) ||
+                token.length() < Integer.parseInt(properties.getProperty("min_token_length"))) {
+            return 0; // ignore if token is too short/long
+        }
+
         // Convert token to byte array
         byte[] bytes = token.getBytes();
 
