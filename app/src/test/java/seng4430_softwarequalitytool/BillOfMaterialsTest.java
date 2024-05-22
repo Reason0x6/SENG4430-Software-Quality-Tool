@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class BillOfMaterialsTest {
 
     @Test
-    public void testCheckForVulnerabilitiesInImports() {
+    public void testCheckForImports() {
         BillOfMaterials bom = new BillOfMaterials();
 
         // Prepare test compilation units with various import declarations
@@ -24,7 +24,7 @@ public class BillOfMaterialsTest {
         compilationUnits.add(cu1);
 
         // Perform vulnerability check
-        bom.checkForVulnerabilitiesInImports(compilationUnits);
+        bom.checkForImports(compilationUnits);
 
         // Verify standard and non-standard imports
         assertTrue(bom.standardLibraries.contains("java.util.ArrayList"));
@@ -35,12 +35,12 @@ public class BillOfMaterialsTest {
 
 
     @Test
-    public void testCheckForVulnerabilitiesInImports_NoImports() {
+    public void testCheckForImports_NoImports() {
         BillOfMaterials bom = new BillOfMaterials();
         List<CompilationUnit> compilationUnits = new ArrayList<>();
 
         // Perform vulnerability check
-        bom.checkForVulnerabilitiesInImports(compilationUnits);
+        bom.checkForImports(compilationUnits);
 
         // Ensure no standard or non-standard imports are detected
         assertTrue(bom.standardLibraries.isEmpty());
@@ -48,7 +48,7 @@ public class BillOfMaterialsTest {
     }
 
     @Test
-    public void testCheckForVulnerabilitiesInImports_OnlyStandardImports() {
+    public void testCheckForImports_OnlyStandardImports() {
         BillOfMaterials bom = new BillOfMaterials();
         CompilationUnit cu = new CompilationUnit();
         cu.addImport("java.util.ArrayList");
@@ -57,7 +57,7 @@ public class BillOfMaterialsTest {
         compilationUnits.add(cu);
 
         // Perform vulnerability check
-        bom.checkForVulnerabilitiesInImports(compilationUnits);
+        bom.checkForImports(compilationUnits);
 
         // Ensure only standard imports are detected
         assertTrue(bom.standardLibraries.contains("java.util.ArrayList"));
@@ -66,7 +66,7 @@ public class BillOfMaterialsTest {
     }
 
     @Test
-    public void testCheckForVulnerabilitiesInImports_OnlyNonStandardImports() {
+    public void testCheckForImports_OnlyNonStandardImports() {
         BillOfMaterials bom = new BillOfMaterials();
         CompilationUnit cu = new CompilationUnit();
         cu.addImport("com.example.CustomClass");
@@ -75,7 +75,7 @@ public class BillOfMaterialsTest {
         compilationUnits.add(cu);
 
         // Perform vulnerability check
-        bom.checkForVulnerabilitiesInImports(compilationUnits);
+        bom.checkForImports(compilationUnits);
         // Ensure only non-standard imports are detected
         assertTrue(bom.nonStandardLibraries.contains("com.example.CustomClass"));
         assertTrue(bom.nonStandardLibraries.contains("org.example.ExternalLibrary"));
