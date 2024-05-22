@@ -23,6 +23,10 @@ public class CyclomaticComplexityVisitor extends VoidVisitorAdapter<Void> {
     /** Current cyclomatic complexity value. Initialized value is always 1*/
     private int complexity = 1;
 
+    /**
+     * Getter for the cyclomatic complexity.
+     * @return The current cyclomatic complexity.
+     */
     public int getComplexity() {
         return complexity;
     }
@@ -38,42 +42,63 @@ public class CyclomaticComplexityVisitor extends VoidVisitorAdapter<Void> {
         super.visit(n, arg);
     }
 
+    /**
+     * Increments cyclomatic complexity count when a 'foreach' statement is visited.
+     */
     @Override
     public void visit(ForEachStmt n, Void arg) {
         complexity++;
         super.visit(n, arg);
     }
 
+    /**
+     * Increments cyclomatic complexity count when a 'while' statement is visited.
+     */
     @Override
     public void visit(WhileStmt n, Void arg) {
         complexity++;
         super.visit(n, arg);
     }
 
+    /**
+     * Increments cyclomatic complexity count when a 'do-while' statement is visited.
+     */
     @Override
     public void visit(DoStmt n, Void arg) {
         complexity++;
         super.visit(n, arg);
     }
 
+    /**
+     * Increments cyclomatic complexity count when a 'switch' statement is visited.
+     */
     @Override
     public void visit(SwitchStmt n, Void arg) {
         complexity++;
         super.visit(n, arg);
     }
 
+    /**
+     * Increments cyclomatic complexity count when a 'catch' clause is visited.
+     */
     @Override
     public void visit(CatchClause n, Void arg) {
         complexity++;
         super.visit(n, arg);
     }
 
+    /**
+     * Increments cyclomatic complexity count when a conditional expression is visited.
+     */
     @Override
     public void visit(ConditionalExpr n, Void arg) {
         complexity++;
         super.visit(n, arg);
     }
 
+    /**
+     * Increments cyclomatic complexity count when a binary expression (AND, OR, BINARY_AND, BINARY_OR, XOR) is visited.
+     */
     @Override
     public void visit(BinaryExpr n, Void arg) {
         switch (n.getOperator()) {

@@ -102,17 +102,19 @@
                 <h1>Seng4430 - Group 1 - Generated Report</h1>
                 <p class="lead">This comprehensive analysis provides invaluable insights into the software's integrity, performance, and adherence to industry standards. Through meticulous examination and advanced metrics, this report aims to empower stakeholders with actionable data to enhance the software's quality and reliability. Dive into the findings to uncover areas of strength, pinpoint opportunities for improvement, and propel your project towards excellence.</p>
                 <h2 id="Fan">Fan-in/Fan-out</h2>
-                <p><b>Fan-in:</b> The number of modules depending on a specific module.<br/>
-                <b>Fan-out:</b> The number of modules a specific module depends on.</p>
+                <p><b>Fan-in:</b> The number of methods depending on a specific method.<br/>
+                <b>Fan-out:</b> The number of methods a specific method depends on.</p>
                 <p>Ref: <a>https://en.wikipedia.org/wiki/Fan-out_(software)</a></p>
+                <p>Ref: <a>https://stackoverflow.com/questions/4092228/design-principle-high-fan-in-vs-high-fan-out</a></p>
                 <button class="accordion">View Fan-in/Fan-out Results </button>
                 <div class="panel">
                     <!------ @@Fan-in/Fan-out Output@@  ---->
                 </div>
                 <hr/>
                 <h2 id="Creds">Credentials in code</h2>
-                <p>How credentials are stored within the codebase & how credentials are utilised within the code for authentication and authorization purposes.</p>
-                <p>Ref: <a>lmao.com</a></p>
+                <p>List of potential API keys and passwords found in the codebase. Manual scanning is required to ensure no credentials are present.</p>
+                <p>Ref: <a>https://blog.gitguardian.com/secrets-in-source-code-episode-3-3-building-reliable-secrets-detection/</a></p>
+                <p>Ref: <a>https://en.wikipedia.org/wiki/Entropy_(information_theory)</a></p>
                 <button class="accordion">View Found Credentials </button>
                 <div class="panel">
                     <!------ @@Credentials Output@@  ---->
@@ -171,6 +173,7 @@
                         </table>
                     </div>
                     <p id="complexityTableScore">Complexity: </p>
+                    <p><em>The above table shows individual functions with a high complexity.</em></p>
                 </div>
 
                 <hr/>
@@ -180,6 +183,20 @@
                 <button class="accordion">View LCOM Results</button>
                 <div class="panel">
                     <!------ @@LCOM Output@@  ---->
+                    <div class="table-responsive">
+                        <table class="table redundant-code-table" id="LCOMTable">
+                            <thead>
+                            <tr>
+                                <th>Class Name</th>
+                                <th>LCOM Score</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>Avg LCOM Score: <span id="LCOMTableScore"></span> | 0 = Fully cohesive, 1 = No cohesion</p>
+                    <p><em>0 indicates perfect cohesion (all methods in the class use all fields) and 1 indicates no cohesion (no method uses any field more than once).</em></p>
                 </div>
 
                 <hr/>
@@ -188,7 +205,72 @@
                 <p>Ref: <a>https://en.wikipedia.org/wiki/Fan-out_(software)</a></p>
               <button class="accordion">View Fog Index Results</button>
                 <div class="panel">
-                    <!------ @@Fog Output@@  ---->
+                    <div class="container"  style="margin-top: 10px;">
+                        <h3>Code Comments Fog Index</h3>
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th>Property</th>
+                                <th>Value</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>Comment Count</td>
+                                <td id="commentCount" class="fogData">0</td>
+                            </tr>
+                            <tr>
+                                <td>Comment Sentences</td>
+                                <td id="commentSentences" class="fogData">0</td>
+                            </tr>
+                            <tr>
+                                <td>Comment Complex Words</td>
+                                <td id="commentComplexWords" class="fogData">0</td>
+                            </tr>
+                            <tr>
+                                <td>Comment Range</td>
+                                <td id="commentRange" class="fogData">0</td>
+                            </tr>
+                            <tr>
+                                <td><b>Evaluation of Comment Fog Index</b></td>
+                                <td id="commentEval" class="fogData">Error Calculating</td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                        <h3>All Code Fog Index</h3>
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th>Property</th>
+                                <th>Value</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>Code Count</td>
+                                <td id="codeCount" class="fogData">0</td>
+                            </tr>
+                            <tr>
+                                <td>Code Sentences/lines</td>
+                                <td id="codeSentences" class="fogData">0</td>
+                            </tr>
+                            <tr>
+                                <td>Code Complex Words</td>
+                                <td id="codeComplexWords" class="fogData">0</td>
+                            </tr>
+                            <tr>
+                                <td>Code Range</td>
+                                <td id="codeRange" class="fogData">0</td>
+                            </tr>
+                            <tr>
+                                <td><b>Evaluation of Code Fog Index</b></td>
+                                <td id="codeEval" class="fogData">Error Calculating</td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
                 </div>
                 <hr/>
 
@@ -196,7 +278,7 @@
                 <p>A bill of materials (BoM) typically refers to a list of dependencies or components used in the project. Selecting an import from the list will take you to <em>mvnreposiitory.com</em> to view the information for the given import.</p>
                 <button class="accordion">View Bill of Materials</button>
                 <div class="panel">
-                    <div class="container">
+                    <div class="container" style="margin-top: 10px;">
                         <h3>Standard Java Imports</h3>
                         <table class="table table-bordered">
                             <thead>
@@ -293,7 +375,6 @@
                 let data = JSON.parse(cyclicResp);
                 const tableBody = document.getElementById('complexityTable').getElementsByTagName('tbody')[0];
                 let totalScore = 0;
-                console.log(Object.entries(data));
                 for (const [className, methods] of Object.entries(data)) {
                     if(className === "_Admin_Total"){
                         totalScore = methods[0];
@@ -314,7 +395,7 @@
                         }
                 }
                 document.getElementById('complexityTableScore').innerHTML = 'Average Cyclomatic Complexity of all classes: <b>' + totalScore.b + '</b>, which represents a risk level of: <b>' + totalScore.a + '</b>';
-                console.log( document.getElementById('complexityTableScore'));
+
             });
         </script>
 
@@ -446,6 +527,50 @@
             });
 
         </script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Sample JSON data
+                let fogResp = '' +
+                    '@@fogResp@@'
+                    + '';
+                let jsonData = JSON.parse(fogResp);
+                let foggy = document.getElementsByClassName('fogData');
+
+
+                for (let i = 0; i < foggy.length; i++) {
+                    foggy[i].innerHTML = jsonData[i];
+                }
+            });
+        </script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                let cyclicResp = '' +
+                    '@@LCOMSCORES@@'
+                    +'';
+                let data = JSON.parse(cyclicResp);
+                const tableBody = document.getElementById('LCOMTable').getElementsByTagName('tbody')[0];
+                let totalScore = 0;
+                for (const x of Object.entries(data)) {
+                        let row = tableBody.insertRow();
+                        let cell1 = row.insertCell(0);
+                        let cell2 = row.insertCell(1);
+                        cell1.textContent = x[0];
+
+                        if(x[1] === "NaN"){
+                            x[1] = "Class is not able to be evaluated - It may be an interface.";
+                        }else{
+
+                            x[1] = parseFloat(Number(x[1]).toFixed(5));
+                            totalScore += x[1];
+                        }
+                    cell2.textContent = x[1];
+
+                }
+
+                document.getElementById('LCOMTableScore').innerHTML = '<b>' + parseFloat((totalScore/ Object.entries(data).length).toFixed(5))  + '</b>';
+            });
+        </script>
+
         <script>
             function toggleViewById(id) {
                 let div = document.getElementById(id);

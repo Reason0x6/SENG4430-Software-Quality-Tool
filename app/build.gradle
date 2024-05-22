@@ -15,13 +15,22 @@ repositories {
     mavenCentral()
 }
 
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
+
 dependencies {
+    implementation 'org.junit.jupiter:junit-jupiter:5.8.1'
     // Use JUnit test framework.
     testImplementation 'junit:junit:4.13.2'
 
-    // This dependency is used by the application.
+    // The dependencies used by the application.
     implementation 'com.google.guava:guava:32.1.1-jre'
     implementation 'com.github.javaparser:javaparser-symbol-solver-core:3.25.9'
+    implementation 'commons-io:commons-io:2.6'
     // Include Gson for JSON processing
     implementation 'com.google.code.gson:gson:2.8.9'
 
@@ -41,6 +50,21 @@ java {
     }
 }
 
+
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+            exclude('src/main/resources')
+        }
+    }
+    test {
+        java {
+            srcDirs = ['src/test']
+        }
+    }
+}
 
 
 application {

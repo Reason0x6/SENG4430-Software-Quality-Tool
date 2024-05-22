@@ -96,7 +96,7 @@
          * @param currentDepth The current depth of 'if' statement nesting.
          * @return The maximum depth of nested 'if' statements found within the node.
          */
-        private int calculateMaxDepth (Node currentNode, int currentDepth) {
+        public int calculateMaxDepth(Node currentNode, int currentDepth) {
             // Base case: If the node is not an IfStmt, traverse its children
             if (!(currentNode instanceof IfStmt ifStatement)) {
                 int maxChildDepth = currentDepth;
