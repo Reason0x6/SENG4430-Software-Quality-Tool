@@ -24,7 +24,6 @@ import seng4430_softwarequalitytool.Util.HTMLTableBuilder;
  */
 public class CredentialsInCode implements DSModule {
 
-    private DirectoryScanner ds;
     private Properties properties;
     private List<Credential> credentials;
     private double minEntropyRatio;
@@ -44,9 +43,8 @@ public class CredentialsInCode implements DSModule {
 
     @Override
     public String compute(DirectoryScanner ds, String filePath) {
-        this.ds = ds;
         try {
-            scanCredentialsInCode();
+            scanCredentialsInCode(ds);
             // Print report
             printModuleHeader();
             printContent();
@@ -62,14 +60,14 @@ public class CredentialsInCode implements DSModule {
         }
     }
 
-    private void scanCredentialsInCode() throws IOException {
+    public void scanCredentialsInCode(DirectoryScanner ds) throws IOException {
         credentials.clear();
 
         String line;
         while ((line = ds.nextLine()) != null) {
             Scanner sc = new Scanner(line).useDelimiter("\\s+|=");
             while (sc.hasNext()) {
-                Credential c = getIfAPIKey(sc.next(), minEntropyRatio).orElse(null);
+                Credential c = getIfAPIKey(ds, sc.next(), minEntropyRatio).orElse(null);
                 if (c != null) {
                     credentials.add(c);
                 }
@@ -159,7 +157,7 @@ public class CredentialsInCode implements DSModule {
         }
     }
 
-    public Optional<Credential> getIfAPIKey(String token, double minEntropy) {
+    public Optional<Credential> getIfAPIKey(DirectoryScanner ds, String token, double minEntropy) {
         if (token.length() == 0)
             return Optional.empty();
 
@@ -206,5 +204,13 @@ public class CredentialsInCode implements DSModule {
         }
 
         return entropy;
+    }
+
+    public List<Credential> getCredentials() {
+        return credentials;
+    }
+
+    public double getMinEntropyRatio() {
+        return minEntropyRatio;
     }
 }
