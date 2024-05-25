@@ -177,6 +177,36 @@
                 </div>
 
                 <hr/>
+                <h2 id="Bill">Bill Of Materials</h2>
+                <p>A bill of materials (BoM) typically refers to a list of dependencies or components used in the project. Selecting an import from the list will take you to <em>mvnreposiitory.com</em> to view the information for the given import.</p>
+                <button class="accordion">View Bill of Materials</button>
+                <div class="panel">
+                    <div class="container" style="margin-top: 10px;">
+                        <h3>Standard Java Imports</h3>
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th>Imports that are contained within JDK</th>
+                            </tr>
+                            </thead>
+                            <tbody id="importTreeBody">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="container">
+                        <h3>Non-Standard Imports</h3>
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th>All scanned non-standard imports</th>
+                            </tr>
+                            </thead>
+                            <tbody id="NSTDimportTreeBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <hr/>
                 <h2 id="Cohesion">Lack of cohesion in methods (LCOM)</h2>
                 <p>Evaluation of the degree of cohesion within methods or functions, measuring the strength of the relationships among statements and variables within the same method.</p>
                 <p>Ref: <a>https://en.wikipedia.org/wiki/Fan-out_(software)</a></p>
@@ -272,38 +302,6 @@
 
                     </div>
                 </div>
-                <hr/>
-
-                <h2 id="Bill">Bill Of Materials</h2>
-                <p>A bill of materials (BoM) typically refers to a list of dependencies or components used in the project. Selecting an import from the list will take you to <em>mvnreposiitory.com</em> to view the information for the given import.</p>
-                <button class="accordion">View Bill of Materials</button>
-                <div class="panel">
-                    <div class="container" style="margin-top: 10px;">
-                        <h3>Standard Java Imports</h3>
-                        <table class="table table-bordered">
-                            <thead>
-                            <tr>
-                                <th>Imports that are contained within JDK</th>
-                            </tr>
-                            </thead>
-                            <tbody id="importTreeBody">
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="container">
-                        <h3>Non-Standard Imports</h3>
-                        <table class="table table-bordered">
-                            <thead>
-                            <tr>
-                                <th>All scanned non-standard imports</th>
-                            </tr>
-                            </thead>
-                            <tbody id="NSTDimportTreeBody">
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <hr/>
                 <hr/>
                 <h2 id="Depth">Depth of conditional nesting</h2>
                 <p>Analysis of the number of nested conditional statements within the code, indicating its complexity and potential readability issues.</p>

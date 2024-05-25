@@ -13,6 +13,7 @@ import java.awt.event.ComponentEvent;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Date;
 
 public class DisplayHandler {
     static public String selectedDirectory = "C:\\";
@@ -117,6 +118,8 @@ public class DisplayHandler {
         introspectiveTestButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
+                Date date = new Date();
                 //run the main application function here passing in the string
                 Log.setAdapter(new Log.StandardOutStandardErrorAdapter());
                 File report = App.createFile(folderPath.toString());
@@ -131,6 +134,8 @@ public class DisplayHandler {
                     desktop.open(report);
                     lastFile = report;
                     openLastFileButton.setEnabled(true);
+                    Date date2 = new Date();
+                    System.out.println(date2.getTime() - date.getTime() + "ms");
 
                 } catch (Exception err) {
                     err.printStackTrace();
@@ -140,6 +145,7 @@ public class DisplayHandler {
         testExampleButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                Date date = new Date();
                 //run the main application function here passing in the string
                 Log.setAdapter(new Log.StandardOutStandardErrorAdapter());
                 File report = App.createFile(folderPath.toString());
@@ -152,6 +158,8 @@ public class DisplayHandler {
                     desktop.open(report);
                     lastFile = report;
                     openLastFileButton.setEnabled(true);
+                    Date date2 = new Date();
+                    System.out.println(date2.getTime() - date.getTime() + "ms");
                 } catch (Exception err) {
                     err.printStackTrace();
                 }
