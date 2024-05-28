@@ -86,13 +86,8 @@ public class CouplingBetweenClasses implements Module {
         html.append("<tbody>");
         StringBuilder comments = new StringBuilder();
         comments.append("<table class=\"table\">");
-        comments.append("<thead class=\"thead-light\"><tr>" +
-                "<th scope=\"col\">Comments on Usage</th>" +
-                "<th scope=\"col\">Index</th>" +
-                "<th scope=\"col\">Return Type</th>" +
-                "<th scope=\"col\">Parameter</th>" +
-                "<th scope=\"col\">Member</th>" +
-                "</tr></thead>");
+        comments.append("<thead class=\"thead-light\"><tr>" + "<th scope=\"col\">Comments on Usage</th>" + "<th scope=\"col\">Index</th>" +
+                "<th scope=\"col\">Return Type</th>" + "<th scope=\"col\">Parameter</th>" + "<th scope=\"col\">Member</th>" + "</tr></thead>");
         comments.append("<tbody>");
         boolean issueFound = false;
         for (int i = 0; i < classes.size(); i++) {
@@ -105,82 +100,10 @@ public class CouplingBetweenClasses implements Module {
                 double aUsingBIndex = couplingIndex(b.returnTypeDictionary.getOrDefault(a.name,0),
                         b.parameterDictionary.getOrDefault(a.name,0),
                         b.memberDictionary.getOrDefault(a.name,0));
-                html.append("<tr>");
-                html.append("<td><span style=\"font-weight:bold;\">" + b.name + "</span> - uses - <span style=\"font-weight:bold;\">" + a.name + "</span></td>");
-                html.append("<td>" +
-                        couplingIndexString(a.returnTypeDictionary.getOrDefault(b.name,0),
-                                 a.parameterDictionary.getOrDefault(b.name,0),
-                                 a.memberDictionary.getOrDefault(b.name,0))
-                        + "</td>");
-                html.append("<td>" + a.returnTypeDictionary.getOrDefault(b.name,0) + "</td>");
-                html.append("<td>" + a.parameterDictionary.getOrDefault(b.name,0) + "</td>");
-                html.append("<td>" + a.memberDictionary.getOrDefault(b.name,0) + "</td>");
-                html.append("</tr>");
-                html.append("<tr>");
-                html.append("<td><span style=\"font-weight:bold;\">" + a.name + "</span> - uses - <span style=\"font-weight:bold;\">" + b.name + "</span></td>");
-                html.append("<td>" +
-                        couplingIndexString(b.returnTypeDictionary.getOrDefault(a.name,0),
-                                b.parameterDictionary.getOrDefault(a.name,0),
-                                b.memberDictionary.getOrDefault(a.name,0))
-                        + "</td>");
-                html.append("<td>" + b.returnTypeDictionary.getOrDefault(a.name,0) + "</td>");
-                html.append("<td>" + b.parameterDictionary.getOrDefault(a.name,0) + "</td>");
-                html.append("<td>" + b.memberDictionary.getOrDefault(a.name,0) + "</td>");
-                html.append("</tr>");
-                if (bUsingAIndex >= 0.8 && bUsingAIndex < 0.9) {
-                    issueFound = true;
-                    comments.append("<tr bgcolor=\"#ECD55E\">");
-                    comments.append("<td><span style=\"font-weight:bold;\">" + b.name + "</span> - uses - <span style=\"font-weight:bold;\">" + a.name + "</span></td>");
-                    comments.append("<td>" +
-                            couplingIndexString(a.returnTypeDictionary.getOrDefault(b.name,0),
-                            a.parameterDictionary.getOrDefault(b.name,0),
-                            a.memberDictionary.getOrDefault(b.name,0))
-                            + "</td>");
-                    comments.append("<td>" + a.returnTypeDictionary.getOrDefault(b.name,0) + "</td>");
-                    comments.append("<td>" + a.parameterDictionary.getOrDefault(b.name,0) + "</td>");
-                    comments.append("<td>" + a.memberDictionary.getOrDefault(b.name,0) + "</td>");
-                    comments.append("</tr>");
-                } else if (bUsingAIndex >= 0.9) {
-                    issueFound = true;
-                    comments.append("<tr bgcolor=\"#F29461\">");
-                    comments.append("<td><span style=\"font-weight:bold;\">" + b.name + "</span> - uses - <span style=\"font-weight:bold;\">" + a.name + "</span></td>");
-                    comments.append("<td>" +
-                            couplingIndexString(a.returnTypeDictionary.getOrDefault(b.name,0),
-                                    a.parameterDictionary.getOrDefault(b.name,0),
-                                    a.memberDictionary.getOrDefault(b.name,0))
-                            + "</td>");
-                    comments.append("<td>" + a.returnTypeDictionary.getOrDefault(b.name,0) + "</td>");
-                    comments.append("<td>" + a.parameterDictionary.getOrDefault(b.name,0) + "</td>");
-                    comments.append("<td>" + a.memberDictionary.getOrDefault(b.name,0) + "</td>");
-                    comments.append("</tr>");
-                }
-                if (aUsingBIndex >= 0.8 && aUsingBIndex < 0.9) {
-                    issueFound = true;
-                    comments.append("<tr bgcolor=\"#ECD55E\">");
-                    comments.append("<td><span style=\"font-weight:bold;\">" + a.name + "</span> - uses - <span style=\"font-weight:bold;\">" + b.name + "</span></td>");
-                    comments.append("<td>" +
-                            couplingIndexString(b.returnTypeDictionary.getOrDefault(a.name,0),
-                                    b.parameterDictionary.getOrDefault(a.name,0),
-                                    b.memberDictionary.getOrDefault(a.name,0))
-                            + "</td>");
-                    comments.append("<td>" + b.returnTypeDictionary.getOrDefault(a.name,0) + "</td>");
-                    comments.append("<td>" + b.parameterDictionary.getOrDefault(a.name,0) + "</td>");
-                    comments.append("<td>" + b.memberDictionary.getOrDefault(a.name,0) + "</td>");
-                    comments.append("</tr>");
-                } else if (aUsingBIndex >= 0.9) {
-                    issueFound = true;
-                    comments.append("<tr bgcolor=\"#F29461\">");
-                    comments.append("<td><span style=\"font-weight:bold;\">" + a.name + "</span> - uses - <span style=\"font-weight:bold;\">" + b.name + "</span></td>");
-                    comments.append("<td>" +
-                            couplingIndexString(b.returnTypeDictionary.getOrDefault(a.name,0),
-                                    b.parameterDictionary.getOrDefault(a.name,0),
-                                    b.memberDictionary.getOrDefault(a.name,0))
-                            + "</td>");
-                    comments.append("<td>" + b.returnTypeDictionary.getOrDefault(a.name,0) + "</td>");
-                    comments.append("<td>" + b.parameterDictionary.getOrDefault(a.name,0) + "</td>");
-                    comments.append("<td>" + b.memberDictionary.getOrDefault(a.name,0) + "</td>");
-                    comments.append("</tr>");
-                }
+                writeHTMLTableRow(a, b);
+                writeHTMLTableRow(b, a);
+                issueFound = isIssueFound(comments, issueFound, a, b, bUsingAIndex);
+                issueFound = isIssueFound(comments, issueFound, b, a, aUsingBIndex);
 
             }
         }
@@ -199,11 +122,56 @@ public class CouplingBetweenClasses implements Module {
         }
     }
 
+    private void writeHTMLTableRow(ClassModel a, ClassModel b) {
+        html.append("<tr>");
+        html.append("<td><span style=\"font-weight:bold;\">" + b.name + "</span> - uses - <span style=\"font-weight:bold;\">" + a.name + "</span></td>");
+        html.append("<td>" +
+                couplingIndexString(a.returnTypeDictionary.getOrDefault(b.name,0),
+                         a.parameterDictionary.getOrDefault(b.name,0),
+                         a.memberDictionary.getOrDefault(b.name,0))
+                + "</td>");
+        html.append("<td>" + a.returnTypeDictionary.getOrDefault(b.name,0) + "</td>");
+        html.append("<td>" + a.parameterDictionary.getOrDefault(b.name,0) + "</td>");
+        html.append("<td>" + a.memberDictionary.getOrDefault(b.name,0) + "</td>");
+        html.append("</tr>");
+    }
+
+    private boolean isIssueFound(StringBuilder comments, boolean issueFound, ClassModel a, ClassModel b, double bUsingAIndex) {
+        if (bUsingAIndex >= 0.8 && bUsingAIndex < 0.9) {
+            issueFound = true;
+            comments.append("<tr bgcolor=\"#ECD55E\">");
+            comments.append("<td><span style=\"font-weight:bold;\">" + b.name + "</span> - uses - <span style=\"font-weight:bold;\">" + a.name + "</span></td>");
+            comments.append("<td>" +
+                    couplingIndexString(a.returnTypeDictionary.getOrDefault(b.name,0),
+                    a.parameterDictionary.getOrDefault(b.name,0),
+                    a.memberDictionary.getOrDefault(b.name,0))
+                    + "</td>");
+            comments.append("<td>" + a.returnTypeDictionary.getOrDefault(b.name,0) + "</td>");
+            comments.append("<td>" + a.parameterDictionary.getOrDefault(b.name,0) + "</td>");
+            comments.append("<td>" + a.memberDictionary.getOrDefault(b.name,0) + "</td>");
+            comments.append("</tr>");
+        } else if (bUsingAIndex >= 0.9) {
+            issueFound = true;
+            comments.append("<tr bgcolor=\"#F29461\">");
+            comments.append("<td><span style=\"font-weight:bold;\">" + b.name + "</span> - uses - <span style=\"font-weight:bold;\">" + a.name + "</span></td>");
+            comments.append("<td>" +
+                    couplingIndexString(a.returnTypeDictionary.getOrDefault(b.name,0),
+                            a.parameterDictionary.getOrDefault(b.name,0),
+                            a.memberDictionary.getOrDefault(b.name,0))
+                    + "</td>");
+            comments.append("<td>" + a.returnTypeDictionary.getOrDefault(b.name,0) + "</td>");
+            comments.append("<td>" + a.parameterDictionary.getOrDefault(b.name,0) + "</td>");
+            comments.append("<td>" + a.memberDictionary.getOrDefault(b.name,0) + "</td>");
+            comments.append("</tr>");
+        }
+        return issueFound;
+    }
+
     private String couplingIndexString(int returnUsage, int parameterUsage, int memberUsage) {
         double result = 1 - (1 / (double)(1 + returnUsage + parameterUsage + memberUsage));
         return String.format("%.2f",result);
     }
-    private double couplingIndex(int returnUsage, int parameterUsage, int memberUsage) {
+    public double couplingIndex(int returnUsage, int parameterUsage, int memberUsage) {
         return 1 - (1 / (double)(1 + returnUsage + parameterUsage + memberUsage));
 
     }
