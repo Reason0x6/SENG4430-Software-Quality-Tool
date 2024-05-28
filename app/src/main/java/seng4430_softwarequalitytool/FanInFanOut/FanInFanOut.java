@@ -218,7 +218,7 @@ public class FanInFanOut implements Module {
         return values.stream().mapToDouble(d -> d).average().orElse(0.0);
     }
 
-    private void evaluate() {
+    public void evaluate() {
         // check if there are methods that exceed max fan-in threshold
         for (String key : fanIns.keySet()) {
             boolean fanInWarning = false;
@@ -240,7 +240,7 @@ public class FanInFanOut implements Module {
         }
     }
 
-    private void calculateFanInFanOut(List<CompilationUnit> compilationUnits) {
+    public void calculateFanInFanOut(List<CompilationUnit> compilationUnits) {
         methodMap.clear();
         fanIns.clear();
         fanOuts.clear();
@@ -288,7 +288,7 @@ public class FanInFanOut implements Module {
      * @return Map where the keys are method names, and the values are the fan-in
      *         metric.
      */
-    private static Map<String, Integer> getFanIns(Map<String, List<String>> methodMap) {
+    public static Map<String, Integer> getFanIns(Map<String, List<String>> methodMap) {
         // Initialise FanIn map with same keys as methodMap
         Map<String, Integer> fanIns = new HashMap<>();
         for (String key : methodMap.keySet()) {
@@ -316,7 +316,7 @@ public class FanInFanOut implements Module {
      * @return A map where the keys are method names, and the values are the fan-in
      *         metric.
      */
-    private static Map<String, Integer> getFanOuts(Map<String, List<String>> methodMap) {
+    public static Map<String, Integer> getFanOuts(Map<String, List<String>> methodMap) {
         Map<String, Integer> fanOuts = new HashMap<>();
         for (Map.Entry<String, List<String>> entry : methodMap.entrySet()) {
             fanOuts.put(entry.getKey(), entry.getValue().size());
@@ -324,7 +324,7 @@ public class FanInFanOut implements Module {
         return fanOuts;
     }
 
-    private String getFullyQualifiedMethodName(CompilationUnit cu, TypeDeclaration<?> td, MethodDeclaration md) {
+    public String getFullyQualifiedMethodName(CompilationUnit cu, TypeDeclaration<?> td, MethodDeclaration md) {
         StringBuilder fullyQualifiedName = new StringBuilder();
 
         // Add the package name
@@ -348,11 +348,14 @@ public class FanInFanOut implements Module {
         public void visit(MethodCallExpr methodCallExpr, List<String> collector) {
             // TODO: Get fully qualified method name from method call expression
             Expression scope = methodCallExpr.getScope().orElse(null);
+            System.out.println("Scope: " + scope);
             String qualifiedName = "";
             if (scope != null) {
                 // Try to resolve the scope
                 try {
+                    System.out.println("bb");
                     ResolvedType resolvedType = scope.calculateResolvedType();
+                    System.out.println("ss");
                     String resolvedScope = resolvedType.describe();
                     String methodName = methodCallExpr.getNameAsString();
                     qualifiedName = resolvedScope != "" ? resolvedScope + "." + methodName : methodName;
@@ -376,5 +379,21 @@ public class FanInFanOut implements Module {
             }
             super.visit(methodCallExpr, collector);
         }
+    }
+
+    public Map<String, List<String>> getMethodMap() {
+        return methodMap;
+    }
+
+    public Map<String, Integer> getFanIns() {
+        return fanIns;
+    }
+
+    public Map<String, Integer> getFanOuts() {
+        return fanOuts;
+    }
+
+    public Properties getProperties() {
+        return properties;
     }
 }

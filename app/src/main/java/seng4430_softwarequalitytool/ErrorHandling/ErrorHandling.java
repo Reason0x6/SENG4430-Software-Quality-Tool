@@ -17,6 +17,10 @@ public class ErrorHandling implements Module {
     private StringBuilder htmlOutput = new StringBuilder();
 
 
+    public int getResult() {
+        return result;
+    }
+
     @Override
     public String compute(List<CompilationUnit> compilationUnits, String filePath) {
         try {

@@ -24,10 +24,10 @@ public class BillOfMaterials implements Module {
     private StringBuilder htmlOutput = new StringBuilder();
 
     /**
-     * Checks for vulnerabilities in import statements.
+     * Checks for import statements.
      * @param compilationUnits List of CompilationUnit objects.
      */
-    public void checkForVulnerabilitiesInImports(List<CompilationUnit> compilationUnits) {
+    public void checkForImports(List<CompilationUnit> compilationUnits) {
 
         // Loop through each compilation unit
         for (CompilationUnit cu : compilationUnits) {
@@ -65,7 +65,7 @@ public class BillOfMaterials implements Module {
      */
     @Override
     public String compute(List<CompilationUnit> compilationUnits, String filePath) {
-        checkForVulnerabilitiesInImports(compilationUnits);
+        checkForImports(compilationUnits);
 
         ImportPrinter iPrinter = new ImportPrinter();
 

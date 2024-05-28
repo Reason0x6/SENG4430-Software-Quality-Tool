@@ -19,15 +19,15 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 public class RedundantCode implements Module {
 
     // Map to store the count of unreachable code lines for each method
-    private final Map<String, Integer> unreachableCodeCounts = new HashMap<>();
+    public final Map<String, Integer> unreachableCodeCounts = new HashMap<>();
     // Map to store the count of duplicated code occurrences for each method
-    private final Map<String, Integer> duplicatedCodeCounts = new HashMap<>();
+    public final Map<String, Integer> duplicatedCodeCounts = new HashMap<>();
     // Set to store the names of unique methods identified during analysis
-    private final Set<String> uniqueMethodNames = new HashSet<>();
+    public final Set<String> uniqueMethodNames = new HashSet<>();
     // Map to store the method names found during analysis along with the context of their usage
-    private final Map<String, List<String>> foundMethodNames = new HashMap<>();
+    public final Map<String, List<String>> foundMethodNames = new HashMap<>();
     // Map to store the current set of unused variables identified in methods
-    private final Map<String, String> currentUnusedVariables = new HashMap<>();
+    public final Map<String, String> currentUnusedVariables = new HashMap<>();
 
     /**
      * Computes various metrics of redundant code including unreachable code, duplicated code,
@@ -99,7 +99,7 @@ public class RedundantCode implements Module {
      * @param compilationUnit The CompilationUnit to analyse.
      * @return The total count of unreachable code lines in the CompilationUnit.
      */
-    private int checkUnreachableCode (CompilationUnit compilationUnit) {
+    public int checkUnreachableCode (CompilationUnit compilationUnit) {
         int methodUnreachableCodeCount;
         // Iterate over method declarations in the modules
         for (MethodDeclaration methodDeclaration : compilationUnit.findAll(MethodDeclaration.class)) {
@@ -133,7 +133,7 @@ public class RedundantCode implements Module {
      * and increments their count in the global duplicatedCodeCounts map.
      * @param compilationUnit The compilation unit to be analyzed for duplicated code.
      */
-    private void checkDuplicatedCode (CompilationUnit compilationUnit) {
+    public void checkDuplicatedCode (CompilationUnit compilationUnit) {
         Set<String> methodsWithDuplicates = new HashSet<>();
         checkDuplicatedStatements(compilationUnit, methodsWithDuplicates);
         // Increment the count for each method in duplicatedCodeCounts
@@ -151,7 +151,7 @@ public class RedundantCode implements Module {
      * @param compilationUnit The module being analszed for duplicated statements.
      * @param methodsWithDuplicates A set that gets updated with names of methods containing duplicated statements.
      */
-    private void checkDuplicatedStatements (CompilationUnit compilationUnit, Set<String> methodsWithDuplicates) {
+    public void checkDuplicatedStatements (CompilationUnit compilationUnit, Set<String> methodsWithDuplicates) {
         // Set to store unique code fragments
         Set<String> uniqueCodeFragments = new HashSet<>();
         // Visit each method declaration in the compilation unit
@@ -183,7 +183,7 @@ public class RedundantCode implements Module {
      *
      * @param compilationUnit The CompilationUnit to analyse for unused code.
      */
-    private void checkUnusedCode (CompilationUnit compilationUnit) {
+    public void checkUnusedCode (CompilationUnit compilationUnit) {
         // Identify and record unused functions in the compilation unit
         unusedFunctions(compilationUnit);
         // Identify and record unused variables in the compilation unit
@@ -199,7 +199,7 @@ public class RedundantCode implements Module {
      * It extends VoidVisitorAdapter to traverse AST nodes and operates on a map where each key is
      * a class name and each value is a list of method names within that class.
      */
-    private static class MethodCollector extends VoidVisitorAdapter<Map<String, List<String>>> {
+    public static class MethodCollector extends VoidVisitorAdapter<Map<String, List<String>>> {
         /**
          * Visits each method declaration node in the AST, extracting the method's name and
          * the class it belongs to, then recording this information in the provided map.
@@ -230,7 +230,7 @@ public class RedundantCode implements Module {
      *
      * @param compilationUnit The CompilationUnit to analyse for unused functions.
      */
-    private void unusedFunctions (CompilationUnit compilationUnit) {
+    public void unusedFunctions (CompilationUnit compilationUnit) {
         // Initialise a map to hold class methods mappings
         Map<String, List<String>> classMethodsMap = new HashMap<>();
         // Create and apply a method visitor to populate the classMethodsMap
@@ -264,7 +264,7 @@ public class RedundantCode implements Module {
      * @param compilationUnit The CompilationUnit to analyse for unused variables.
      * @return A map with method names as keys and details about unused variables as values.
      */
-    private Map<String, String> unUsedVariables (CompilationUnit compilationUnit) {
+    public Map<String, String> unUsedVariables (CompilationUnit compilationUnit) {
         // Initialise a map to hold the unused variables count for each method
         Map<String, String> unusedCodeCounts = new HashMap<>();
         // Iterate over each method declaration within the module
@@ -347,7 +347,7 @@ public class RedundantCode implements Module {
         System.out.println("Total redundant code score: " + totalRedundantCodeScore);
     }
 
-    private void printToFile(String filePath, String jsonResults) {
+    public void printToFile(String filePath, String jsonResults) {
         String find = "@@Redudant code response here@@";
         System.out.println("Writing results to file: " + jsonResults);
         try {

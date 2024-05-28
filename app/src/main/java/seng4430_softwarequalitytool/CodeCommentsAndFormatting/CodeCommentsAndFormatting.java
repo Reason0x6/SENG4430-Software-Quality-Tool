@@ -12,6 +12,10 @@ import java.util.List;
 
 public class CodeCommentsAndFormatting implements Module {
 
+    public int getResult() {
+        return result;
+    }
+
     private int result;
     private List<CommentsAndFormattingEvaluationMetrics> commentsAndFormattingEvaluationMetricsList = new ArrayList<>();
 
