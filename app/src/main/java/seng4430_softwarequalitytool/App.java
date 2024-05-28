@@ -189,7 +189,6 @@ public class App {
             while ((length = fis.read(buffer)) > 0) {
                 fos.write(buffer, 0, length);
             }
-
             System.out.println("File copied successfully!");
         } catch (IOException e) {
             System.err.println("Error copying file: " + e.getMessage());
